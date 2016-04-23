@@ -2,33 +2,24 @@ package com.evalwithin.olook.Data;
 
 
 import android.content.Context;
-import android.os.AsyncTask;
 import android.os.Process;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
 import com.evalwithin.olook.OLookApp;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.ObjectInput;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
 
 /**
  * Created by Pascal on 23/04/2016.
  */
-public class DataManager extends AppCompatActivity implements Runnable
+public class DataManager extends Thread
 {
     private static DataManager instance = null;
 
@@ -63,17 +54,20 @@ public class DataManager extends AppCompatActivity implements Runnable
         return locationsList.get(listIndex);
     }
 
+    @Override
     public void run()
     {
-        Process.setThreadPriority(Process.THREAD_PRIORITY_LOWEST);
+        Process.setThreadPriority(Process.THREAD_PRIORITY_BACKGROUND);
 
         while(true)
         {
             //TODO: Verify if file exists --> Create/Update if not existing
-            ArrayList<Location> fileZap = readFile(Zap.ZAP_FILENAME);
-            if (fileZap != null)
+            if (locationsList.get(INDEX_ZAP).isEmpty())
             {
-
+                ArrayList<Location> fileZap = readFile(Zap.ZAP_FILENAME);
+                if (fileZap != null) {
+                    locationsList.set(INDEX_ZAP, fileZap);
+                }
             }
 
 
@@ -153,7 +147,7 @@ public class DataManager extends AppCompatActivity implements Runnable
         Context context = OLookApp.getAppContext();
         try
         {
-            FileOutputStream fos = context.openFileOutput(fileName, MODE_PRIVATE);
+            FileOutputStream fos = context.openFileOutput(fileName, Context.MODE_PRIVATE);
             ObjectOutputStream oos = new ObjectOutputStream(fos);
             oos.writeObject(listToWrite);
             fos.close();
