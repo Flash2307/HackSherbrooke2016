@@ -31,7 +31,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.util.ArrayList;
 
-public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
+public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, OrientationListener {
 
     private GPSTracker tracker;
     private OrientationTracker orientationTracker;
@@ -140,11 +140,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         tracker = new GPSTracker(getApplicationContext());
         orientationTracker = new OrientationTracker(getApplicationContext());
+        orientationTracker.addListener(this);
     }
 
-    public void onLocationUpdated() {
-
-    }
+    // THE MAP
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
@@ -164,6 +163,16 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         CameraPosition pos = CameraPosition.builder(oldPos).bearing(245.0F)
                 .build();
         googleMap.moveCamera(CameraUpdateFactory.newCameraPosition(pos));
+    }
+
+    @Override
+    public void onOrientationChanged(float orientation) {
+        //System.out.println(orientation);
+    }
+
+    @Override
+    public void onAccuracyChanged(int accuracy) {
+
     }
 
     /*Called when item selected in drawer*/
