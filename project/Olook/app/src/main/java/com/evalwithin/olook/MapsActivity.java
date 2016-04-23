@@ -22,6 +22,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+
+        JSONFetcher json = new JSONFetcher();
+        json.execute(Parking.URL_PARKING, Parking.class.toString());
     }
 
 
