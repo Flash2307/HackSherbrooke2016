@@ -18,6 +18,8 @@ import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.evalwithin.olook.Data.Attrait;
+import com.evalwithin.olook.Data.Parking;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -136,8 +138,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
-        JSONFetcher json = new JSONFetcher();
-        json.execute(Parking.URL_PARKING, Parking.class.toString());
+        new DataFetcher().execute(Parking.URL_PARKING, Parking.class.toString());
+        new DataFetcher().execute(Attrait.URL_ATTRAIT, Attrait.class.toString());
         MapUtils.init(getResources());
 
         tracker = new GPSTracker(getApplicationContext());
