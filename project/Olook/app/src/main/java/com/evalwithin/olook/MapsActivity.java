@@ -3,6 +3,7 @@ package com.evalwithin.olook;
 import android.app.FragmentManager;
 import android.content.Context;
 import android.app.Fragment;
+import android.location.Location;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.widget.DrawerLayout;
@@ -29,6 +30,8 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import java.util.ArrayList;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
+
+    private GPSTracker tracker;
 
     private static String TAG = MapsActivity.class.getSimpleName();
 
@@ -131,6 +134,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mapFragment.getMapAsync(this);
 
         MapUtils.init(getResources());
+
+        tracker = new GPSTracker(getApplicationContext());
     }
 
     public void onLocationUpdated() {
@@ -141,11 +146,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void onMapReady(GoogleMap googleMap) {
         MapUtils.addInterestPoint(googleMap, new LatLng(-30, 140), "Nice area!");
 
+        //LatLng myLocation = new LatLng(-34, 151);
 
-        LatLng myLocation = new LatLng(-34, 151);
-        MapUtils.setMyLocation(googleMap, myLocation);
-        googleMap.moveCamera(CameraUpdateFactory.newLatLng(myLocation));
-
+        Location myLocation;
+        while (tracker.getLocation() == null);
+        myLocation = tracker.getLocation();
+        LatLng myLatLng = new LatLng(myLocation.getLatitude(), myLocation.getLongitude());
+        MapUtils.setMyLocation(googleMap, myLatLng);
+        googleMap.moveCamera(CameraUpdateFactory.newLatLng(myLatLng));
     }
 
     /*Called when item selected in drawer*/

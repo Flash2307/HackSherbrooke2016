@@ -45,8 +45,8 @@ public class GPSTracker extends Service implements LocationListener {
             if(gpsEnabled && context.checkCallingOrSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED)
                 locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 60, 10, this);
 
-            if(locationManager != null)
-                location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+            //if(locationManager != null)
+            //    location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
         }
         catch(Exception e){
             e.printStackTrace();
