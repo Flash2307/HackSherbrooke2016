@@ -147,17 +147,30 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     @Override
-    public void onMapReady(GoogleMap googleMap) {
+    public void onMapReady(final GoogleMap googleMap) {
         MapUtils.addInterestPoint(googleMap, new LatLng(-30, 140), "Nice area!");
-
-        //LatLng myLocation = new LatLng(-34, 151);
 
         Location myLocation;
         while (tracker.getLocation() == null);
         myLocation = tracker.getLocation();
         LatLng myLatLng = new LatLng(myLocation.getLatitude(), myLocation.getLongitude());
         MapUtils.setMyLocation(googleMap, myLatLng);
-        googleMap.moveCamera(CameraUpdateFactory.newLatLng(myLatLng));
+        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(myLatLng, 15f));
+
+        googleMap.setOnCameraChangeListener(new GoogleMap.OnCameraChangeListener() {
+            float maxLevel = 18f;
+            float minLevel = 15f;
+
+            @Override
+            public void onCameraChange(CameraPosition pos) {
+                if (pos.zoom > maxLevel) {
+                    // TODO : Mettre le mode camera
+                    googleMap.animateCamera(CameraUpdateFactory.zoomTo(maxLevel));
+                } else if (pos.zoom < minLevel) {
+                    googleMap.animateCamera(CameraUpdateFactory.zoomTo(minLevel));
+                }
+            }
+        });
 
         // rotate 90 degrees
         CameraPosition oldPos = googleMap.getCameraPosition();
