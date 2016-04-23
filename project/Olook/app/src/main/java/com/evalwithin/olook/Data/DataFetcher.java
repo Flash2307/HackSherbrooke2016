@@ -1,11 +1,7 @@
-package com.evalwithin.olook;
+package com.evalwithin.olook.Data;
 
 import android.os.AsyncTask;
 import android.util.Log;
-
-import com.evalwithin.olook.Data.Attrait;
-import com.evalwithin.olook.Data.Parking;
-import com.evalwithin.olook.Data.Zap;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -18,9 +14,12 @@ import java.util.ArrayList;
 /**
  * Created by Pascal on 23/04/2016.
  */
+
+
 public class DataFetcher extends AsyncTask<String, Void, String>
 {
-    private String jsonString;
+    private String dataString;
+    private boolean finished;
 
     public static ArrayList<Parking> parkingList = new ArrayList<>();
     public static ArrayList<Attrait> attraitList = new ArrayList<>();
@@ -28,13 +27,24 @@ public class DataFetcher extends AsyncTask<String, Void, String>
 
     public DataFetcher()
     {
-        jsonString = "";
+        dataString = "";
+        finished = false;
+    }
+
+    public boolean isFinished()
+    {
+        return finished;
+    }
+
+    public String getDataString()
+    {
+        return dataString;
     }
 
     protected String doInBackground(String... params)
     {
+        finished = false;
         String urlStr = params[0];
-        String usedClass = params[1];
 
         HttpURLConnection c = null;
         try
@@ -62,7 +72,7 @@ public class DataFetcher extends AsyncTask<String, Void, String>
                     strBuilder.append(line + "\n");
                 }
                 reader.close();
-                jsonString = strBuilder.toString();
+                dataString = strBuilder.toString();
             }
         }
         catch (MalformedURLException e)
@@ -90,23 +100,9 @@ public class DataFetcher extends AsyncTask<String, Void, String>
                 }
             }
         }
-
-        return usedClass;
-    }
-
-    protected void onPostExecute(String s)
-    {
-        if (s.equals("class com.evalwithin.olook.Data.Parking"))
-        {
-            DataFetcher.parkingList = Parking.parseJSON(jsonString);
-        }
-        else if (s.equals("class com.evalwithin.olook.Data.Attrait"))
-        {
-            DataFetcher.attraitList = Attrait.parseJSON(jsonString);
-        }
-        else if (s.equals("class com.evalwithin.olook.Data.Zap"))
-        {
-            DataFetcher.zapList = Zap.parseCSV(jsonString);
-        }
+        finished = true;
+        return "Finished Processing";
     }
 }
+
+
