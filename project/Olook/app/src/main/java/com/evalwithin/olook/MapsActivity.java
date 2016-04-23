@@ -20,6 +20,7 @@ import android.widget.TextView;
 
 import com.evalwithin.olook.Data.Attrait;
 import com.evalwithin.olook.Data.Parking;
+import com.evalwithin.olook.Data.Zap;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -140,6 +141,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         new DataFetcher().execute(Parking.URL_PARKING, Parking.class.toString());
         new DataFetcher().execute(Attrait.URL_ATTRAIT, Attrait.class.toString());
+        new DataFetcher().execute(Zap.URL_ZAP, Zap.class.toString());
         MapUtils.init(getResources());
 
         tracker = new GPSTracker(getApplicationContext());
