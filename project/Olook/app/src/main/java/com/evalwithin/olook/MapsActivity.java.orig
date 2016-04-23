@@ -15,7 +15,11 @@ import android.widget.RelativeLayout;
 
 import com.evalwithin.olook.Data.Attrait;
 import com.evalwithin.olook.Data.Parking;
+<<<<<<< HEAD
 import com.evalwithin.olook.Data.Zap;
+import com.google.android.gms.maps.CameraUpdate;
+=======
+>>>>>>> bbd20b84919bbca29e5b4ad97f99108220dc934a
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -88,25 +92,22 @@ public class MapsActivity extends AppCompatActivity
     @Override
     public void onMapReady(final GoogleMap googleMap) {
         m_map = googleMap;
+        m_map.getUiSettings().setScrollGesturesEnabled(false);
+        centerMap(gpsTracker.getLocation());
 
-        //m_map.getUiSettings().setScrollGesturesEnabled(false);
-
-        centerMap(gpsTracker.getLocation(), 15);
         MapUtils.addInterestPoint(googleMap, new LatLng(-30, 140), "Nice area!");
-
         googleMap.setOnCameraChangeListener(new GoogleMap.OnCameraChangeListener() {
+            float maxLevel = 18f;
+            float minLevel = 15f;
+
             @Override
             public void onCameraChange(CameraPosition pos) {
-                float maxLevel = 18f;
-                float minLevel = 15f;
-
                 if (pos.zoom > maxLevel) {
                     // TODO : Mettre le mode camera
                     googleMap.animateCamera(CameraUpdateFactory.zoomTo(maxLevel));
                 } else if (pos.zoom < minLevel) {
                     googleMap.animateCamera(CameraUpdateFactory.zoomTo(minLevel));
                 }
-                centerMap(gpsTracker.getLocation());
             }
         });
 
@@ -161,15 +162,6 @@ public class MapsActivity extends AppCompatActivity
 
         LatLng myLatLng = new LatLng(location.getLatitude(), location.getLongitude());
         MapUtils.setMyLocation(m_map, myLatLng);
-        m_map.moveCamera(CameraUpdateFactory.newLatLng(myLatLng));
-    }
-
-    private void centerMap(Location location, float zoom) {
-        if(location == null)
-            return;
-
-        LatLng myLatLng = new LatLng(location.getLatitude(), location.getLongitude());
-        MapUtils.setMyLocation(m_map, myLatLng);
-        m_map.moveCamera(CameraUpdateFactory.newLatLngZoom(myLatLng, zoom));
+        m_map.moveCamera(CameraUpdateFactory.newLatLngZoom(myLatLng, 15f));
     }
 }
