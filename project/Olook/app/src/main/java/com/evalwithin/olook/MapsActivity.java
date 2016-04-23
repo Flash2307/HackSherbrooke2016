@@ -90,8 +90,14 @@ public class MapsActivity extends AppCompatActivity
         m_map = googleMap;
 
         //m_map.getUiSettings().setScrollGesturesEnabled(false);
+        //m_map.getUiSettings().setCompassEnabled(false);
 
-        centerMap(gpsTracker.getLocation(), 15);
+        Location loc = gpsTracker.getLocation();
+        LatLng ll = new LatLng(loc.getLatitude(), loc.getLongitude());
+
+        centerMap(loc, 15);
+
+        MapUtils.setMyLocation(m_map, ll);
         MapUtils.addInterestPoint(googleMap, new LatLng(-30, 140), "Nice area!");
 
         googleMap.setOnCameraChangeListener(new GoogleMap.OnCameraChangeListener() {
@@ -160,7 +166,6 @@ public class MapsActivity extends AppCompatActivity
             return;
 
         LatLng myLatLng = new LatLng(location.getLatitude(), location.getLongitude());
-        MapUtils.setMyLocation(m_map, myLatLng);
         m_map.moveCamera(CameraUpdateFactory.newLatLng(myLatLng));
     }
 
@@ -169,7 +174,6 @@ public class MapsActivity extends AppCompatActivity
             return;
 
         LatLng myLatLng = new LatLng(location.getLatitude(), location.getLongitude());
-        MapUtils.setMyLocation(m_map, myLatLng);
         m_map.moveCamera(CameraUpdateFactory.newLatLngZoom(myLatLng, zoom));
     }
 }
