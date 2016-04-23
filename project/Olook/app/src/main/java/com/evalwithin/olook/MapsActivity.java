@@ -28,6 +28,7 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.UiSettings;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 
@@ -114,6 +115,8 @@ public class MapsActivity extends AppCompatActivity
     @Override
     public void onMapReady(final GoogleMap googleMap) {
         m_map = googleMap;
+        m_map.getUiSettings().setScrollGesturesEnabled(false);
+        m_map.getUiSettings().setRotateGesturesEnabled(false);
 
         //m_map.getUiSettings().setScrollGesturesEnabled(false);
         //m_map.getUiSettings().setCompassEnabled(false);
@@ -131,7 +134,6 @@ public class MapsActivity extends AppCompatActivity
             private LatLng lastPos = new LatLng(0, 0);
 
             private float cumulativeZoom = 0;
-            private float cumulativeMove = 0;
 
             @Override
             public void onCameraChange(CameraPosition pos) {
@@ -140,9 +142,11 @@ public class MapsActivity extends AppCompatActivity
 
                 if (pos.zoom > maxLevel) {
                     // TODO : Mettre le mode camera
-                    googleMap.animateCamera(CameraUpdateFactory.zoomTo(maxLevel));
+                    //googleMap.animateCamera(CameraUpdateFactory.zoomTo(maxLevel), 0, null);
+                    googleMap.moveCamera(CameraUpdateFactory.zoomTo(maxLevel));
                 } else if (pos.zoom < minLevel) {
-                    googleMap.animateCamera(CameraUpdateFactory.zoomTo(minLevel));
+                    //googleMap.animateCamera(CameraUpdateFactory.zoomTo(minLevel), 0, null);
+                    googleMap.moveCamera(CameraUpdateFactory.zoomTo(minLevel));
                 }
 
                 boolean needToCenter = false;
@@ -154,22 +158,11 @@ public class MapsActivity extends AppCompatActivity
                     cumulativeZoom = 0;
                 }
 
-                if (cumulativeMove < 0.2) {
-                    double lat = pos.target.latitude;
-                    double lng = pos.target.longitude;
-                    double squares = Math.pow(lat - lastPos.latitude, 2) + Math.pow(lng - lastPos.longitude, 2);
-                    cumulativeMove += Math.sqrt(squares);
-                } else {
-                    needToCenter = true;
-                    cumulativeZoom = 0;
-                }
-
                 if (needToCenter) {
                     centerMap(gpsTracker.getLocation());
                 }
 
                 lastZoom = pos.zoom;
-                lastPos = pos.target;
             }
         });
 
