@@ -1,14 +1,19 @@
 package com.evalwithin.olook;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.NavigationView;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
+import android.view.MenuItem;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 
 /**
  * Created by root on 23/04/16.
  */
-public class CameraActivity extends AppCompatActivity {
+public class CameraActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     private CameraPreview mPreview;
     private RelativeLayout mLayout;
 
@@ -42,5 +47,25 @@ public class CameraActivity extends AppCompatActivity {
         mPreview.stop();
         mLayout.removeView(mPreview); // This is necessary.
         mPreview = null;
+    }
+
+    @SuppressWarnings("StatementWithEmptyBody")
+    @Override
+    public boolean onNavigationItemSelected(MenuItem item) {
+        // Handle navigation view item clicks here.
+        int id = item.getItemId();
+
+        if (id == R.id.nav_view) {
+            Intent myIntent = new Intent(this, MapsActivity.class);
+            this.startActivity(myIntent);
+        } else if (id == R.id.nav_manage) {
+
+        } else if (id == R.id.nav_share) {
+
+        }
+
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout1);
+        drawer.closeDrawer(GravityCompat.START);
+        return true;
     }
 }
