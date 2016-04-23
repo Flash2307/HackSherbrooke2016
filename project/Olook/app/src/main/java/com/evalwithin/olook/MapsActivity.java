@@ -18,12 +18,14 @@ import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
@@ -32,6 +34,7 @@ import java.util.ArrayList;
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
     private GPSTracker tracker;
+    private OrientationTracker orientationTracker;
 
     private static String TAG = MapsActivity.class.getSimpleName();
 
@@ -136,6 +139,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         MapUtils.init(getResources());
 
         tracker = new GPSTracker(getApplicationContext());
+        orientationTracker = new OrientationTracker(getApplicationContext());
     }
 
     public void onLocationUpdated() {
@@ -154,6 +158,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         LatLng myLatLng = new LatLng(myLocation.getLatitude(), myLocation.getLongitude());
         MapUtils.setMyLocation(googleMap, myLatLng);
         googleMap.moveCamera(CameraUpdateFactory.newLatLng(myLatLng));
+
+        // rotate 90 degrees
+        CameraPosition oldPos = googleMap.getCameraPosition();
+        CameraPosition pos = CameraPosition.builder(oldPos).bearing(245.0F)
+                .build();
+        googleMap.moveCamera(CameraUpdateFactory.newCameraPosition(pos));
     }
 
     /*Called when item selected in drawer*/
