@@ -37,8 +37,8 @@ public class GPSTracker extends Service implements LocationListener {
 
         //Hardcoded location for emulators (will be override if Network or GPS is present)
         location = new Location("HARDCODED !");
-        location.setLongitude(45.410538);
-        location.setLatitude(-71.887056);
+        location.setLongitude(-71.887056);
+        location.setLatitude(45.410538);
 
         initGPS();
     }
