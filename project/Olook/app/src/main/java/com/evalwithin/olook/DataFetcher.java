@@ -5,6 +5,7 @@ import android.util.Log;
 
 import com.evalwithin.olook.Data.Attrait;
 import com.evalwithin.olook.Data.Parking;
+import com.evalwithin.olook.Data.Zap;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -23,6 +24,7 @@ public class DataFetcher extends AsyncTask<String, Void, String>
 
     public static ArrayList<Parking> parkingList = new ArrayList<>();
     public static ArrayList<Attrait> attraitList = new ArrayList<>();
+    public static ArrayList<Zap> zapList = new ArrayList<>();
 
     public DataFetcher()
     {
@@ -101,6 +103,10 @@ public class DataFetcher extends AsyncTask<String, Void, String>
         else if (s.equals("class com.evalwithin.olook.Data.Attrait"))
         {
             DataFetcher.attraitList = Attrait.parseJSON(jsonString);
+        }
+        else if (s.equals("class com.evalwithin.olook.Data.Zap"))
+        {
+            DataFetcher.zapList = Zap.parseCSV(jsonString);
         }
     }
 }

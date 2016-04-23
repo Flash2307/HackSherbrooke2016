@@ -1,10 +1,5 @@
 package com.evalwithin.olook;
 
-import android.app.FragmentManager;
-import android.content.ComponentName;
-import android.content.Context;
-import android.app.Fragment;
-import android.content.Intent;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
@@ -12,18 +7,19 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.Toolbar;
-import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.SubMenu;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 
 import com.evalwithin.olook.Data.Attrait;
 import com.evalwithin.olook.Data.Parking;
+<<<<<<< HEAD
 import com.evalwithin.olook.Data.Zap;
+import com.google.android.gms.maps.CameraUpdate;
+=======
+>>>>>>> bbd20b84919bbca29e5b4ad97f99108220dc934a
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -36,7 +32,6 @@ public class MapsActivity extends AppCompatActivity
 
     private GPSTracker gpsTracker;
     private OrientationTracker orientationTracker;
-    private PopupMenu popupMenu;
 
     private static String TAG = MapsActivity.class.getSimpleName();
 
@@ -78,29 +73,6 @@ public class MapsActivity extends AppCompatActivity
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-
-        if(menu.size() == 0)
-        {
-            for(int i = 0; i < 5; i++)
-            {
-                menu.add(0, i, Menu.NONE, "item " + i).setCheckable(true);
-            }
-        }
-
-        getMenuInflater().inflate(R.menu.main, menu);
-
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem menuItem)
-    {
-        menuItem.setChecked(!menuItem.isChecked());
-        return false;
-    }
-
-    @Override
     public void onBackPressed() {
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
@@ -111,27 +83,31 @@ public class MapsActivity extends AppCompatActivity
     }
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.main, menu);
+        return true;
+    }
+
+    @Override
     public void onMapReady(final GoogleMap googleMap) {
         m_map = googleMap;
+        m_map.getUiSettings().setScrollGesturesEnabled(false);
+        centerMap(gpsTracker.getLocation());
 
-        //m_map.getUiSettings().setScrollGesturesEnabled(false);
-
-        centerMap(gpsTracker.getLocation(), 15);
         MapUtils.addInterestPoint(googleMap, new LatLng(-30, 140), "Nice area!");
-
         googleMap.setOnCameraChangeListener(new GoogleMap.OnCameraChangeListener() {
+            float maxLevel = 18f;
+            float minLevel = 15f;
+
             @Override
             public void onCameraChange(CameraPosition pos) {
-                float maxLevel = 18f;
-                float minLevel = 15f;
-
                 if (pos.zoom > maxLevel) {
                     // TODO : Mettre le mode camera
                     googleMap.animateCamera(CameraUpdateFactory.zoomTo(maxLevel));
                 } else if (pos.zoom < minLevel) {
                     googleMap.animateCamera(CameraUpdateFactory.zoomTo(minLevel));
                 }
-                centerMap(gpsTracker.getLocation());
             }
         });
 
@@ -139,6 +115,21 @@ public class MapsActivity extends AppCompatActivity
         CameraPosition oldPos = googleMap.getCameraPosition();
         CameraPosition pos = CameraPosition.builder(oldPos).bearing(245.0F).build();
         googleMap.moveCamera(CameraUpdateFactory.newCameraPosition(pos));
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.action_settings) {
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 
     @SuppressWarnings("StatementWithEmptyBody")
@@ -171,15 +162,6 @@ public class MapsActivity extends AppCompatActivity
 
         LatLng myLatLng = new LatLng(location.getLatitude(), location.getLongitude());
         MapUtils.setMyLocation(m_map, myLatLng);
-        m_map.moveCamera(CameraUpdateFactory.newLatLng(myLatLng));
-    }
-
-    private void centerMap(Location location, float zoom) {
-        if(location == null)
-            return;
-
-        LatLng myLatLng = new LatLng(location.getLatitude(), location.getLongitude());
-        MapUtils.setMyLocation(m_map, myLatLng);
-        m_map.moveCamera(CameraUpdateFactory.newLatLngZoom(myLatLng, zoom));
+        m_map.moveCamera(CameraUpdateFactory.newLatLngZoom(myLatLng, 15f));
     }
 }
