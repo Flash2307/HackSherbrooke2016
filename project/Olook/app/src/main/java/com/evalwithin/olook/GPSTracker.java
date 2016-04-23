@@ -34,6 +34,12 @@ public class GPSTracker extends Service implements LocationListener {
 
     public GPSTracker(Context context){
         this.context = context;
+
+        //Hardcoded location for emulators (will be override if Network or GPS is present)
+        location = new Location("HARDCODED !");
+        location.setLongitude(45.410538);
+        location.setLatitude(-71.887056);
+
         initGPS();
     }
 
