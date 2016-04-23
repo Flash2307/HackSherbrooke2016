@@ -3,8 +3,8 @@ package com.evalwithin.olook;
 import android.os.AsyncTask;
 import android.util.Log;
 
-import org.json.JSONArray;
-import org.json.JSONException;
+import com.evalwithin.olook.Data.Attrait;
+import com.evalwithin.olook.Data.Parking;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -17,16 +17,16 @@ import java.util.ArrayList;
 /**
  * Created by Pascal on 23/04/2016.
  */
-public class JSONFetcher extends AsyncTask<String, Void, String>
+public class DataFetcher extends AsyncTask<String, Void, String>
 {
     private String jsonString;
 
-    private ArrayList<Parking> parkingList;
+    public static ArrayList<Parking> parkingList = new ArrayList<>();
+    public static ArrayList<Attrait> attraitList = new ArrayList<>();
 
-    public JSONFetcher()
+    public DataFetcher()
     {
         jsonString = "";
-        parkingList = new ArrayList<>();
     }
 
     protected String doInBackground(String... params)
@@ -94,19 +94,13 @@ public class JSONFetcher extends AsyncTask<String, Void, String>
 
     protected void onPostExecute(String s)
     {
-
-        try
+        if (s.equals("class com.evalwithin.olook.Data.Parking"))
         {
-            JSONArray jArray = new JSONArray(jsonString);
-
-            if (s.equals("Parking"))
-            {
-                
-            }
+            DataFetcher.parkingList = Parking.parseJSON(jsonString);
         }
-        catch (JSONException e)
+        else if (s.equals("class com.evalwithin.olook.Data.Attrait"))
         {
-            Log.e("JSONException", e.toString());
+            DataFetcher.attraitList = Attrait.parseJSON(jsonString);
         }
     }
 }
