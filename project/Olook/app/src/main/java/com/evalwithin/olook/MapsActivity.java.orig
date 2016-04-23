@@ -24,10 +24,15 @@ import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 
 public class MapsActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, OnMapReadyCallback, GPSListener, OrientationListener {
+        implements NavigationView.OnNavigationItemSelectedListener, OnMapReadyCallback, GPSListener {
 
+<<<<<<< HEAD
+public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, OrientationListener {
 
+    private GPSTracker tracker;
+=======
     private GPSTracker gpsTracker;
+>>>>>>> 2521e4ff6967f4975f0cb62b54167b47836878ef
     private OrientationTracker orientationTracker;
 
     private static String TAG = MapsActivity.class.getSimpleName();
@@ -70,6 +75,9 @@ public class MapsActivity extends AppCompatActivity
         orientationTracker.addListener(this);
     }
 
+<<<<<<< HEAD
+    // THE MAP
+=======
     @Override
     public void onBackPressed() {
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -86,6 +94,7 @@ public class MapsActivity extends AppCompatActivity
         getMenuInflater().inflate(R.menu.main, menu);
         return true;
     }
+>>>>>>> 2521e4ff6967f4975f0cb62b54167b47836878ef
 
     @Override
     public void onMapReady(final GoogleMap googleMap) {
@@ -97,12 +106,6 @@ public class MapsActivity extends AppCompatActivity
         MapUtils.addInterestPoint(googleMap, new LatLng(-30, 140), "Nice area!");
 
         googleMap.setOnCameraChangeListener(new GoogleMap.OnCameraChangeListener() {
-            private float lastZoom = 1;
-            private LatLng lastPos = new LatLng(0, 0);
-
-            private float cumulativeZoom = 0;
-            private float cumulativeMove = 0;
-
             @Override
             public void onCameraChange(CameraPosition pos) {
                 float maxLevel = 18f;
@@ -114,32 +117,7 @@ public class MapsActivity extends AppCompatActivity
                 } else if (pos.zoom < minLevel) {
                     googleMap.animateCamera(CameraUpdateFactory.zoomTo(minLevel));
                 }
-
-                boolean needToCenter = false;
-
-                if (cumulativeZoom < 0.2) {
-                    cumulativeZoom += pos.zoom - lastZoom;
-                } else {
-                    needToCenter = true;
-                    cumulativeZoom = 0;
-                }
-
-                if (cumulativeMove < 0.2) {
-                    double lat = pos.target.latitude;
-                    double lng = pos.target.longitude;
-                    double squares = Math.pow(lat - lastPos.latitude, 2) + Math.pow(lng - lastPos.longitude, 2);
-                    cumulativeMove += Math.sqrt(squares);
-                } else {
-                    needToCenter = true;
-                    cumulativeZoom = 0;
-                }
-
-                if (needToCenter) {
-                    centerMap(gpsTracker.getLocation());
-                }
-
-                lastZoom = pos.zoom;
-                lastPos = pos.target;
+                centerMap(gpsTracker.getLocation());
             }
         });
 
@@ -150,6 +128,7 @@ public class MapsActivity extends AppCompatActivity
     }
 
     @Override
+<<<<<<< HEAD
     public void onOrientationChanged(float orientation) {
         //System.out.println(orientation);
     }
@@ -159,11 +138,16 @@ public class MapsActivity extends AppCompatActivity
 
     }
 
+    /*Called when item selected in drawer*/
+    private void selectItemFromDrawer(int position) {
+        Fragment fragment = new PreferencesFragment();
+=======
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
+
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             return true;
@@ -199,6 +183,7 @@ public class MapsActivity extends AppCompatActivity
     private void centerMap(Location location) {
         if(location == null)
             return;
+>>>>>>> 2521e4ff6967f4975f0cb62b54167b47836878ef
 
         LatLng myLatLng = new LatLng(location.getLatitude(), location.getLongitude());
         MapUtils.setMyLocation(m_map, myLatLng);
