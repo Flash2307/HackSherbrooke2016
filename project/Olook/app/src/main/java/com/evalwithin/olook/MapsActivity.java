@@ -15,6 +15,7 @@ import android.widget.RelativeLayout;
 
 import com.evalwithin.olook.Data.Attrait;
 import com.evalwithin.olook.Data.Parking;
+import com.evalwithin.olook.Data.Zap;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -60,6 +61,7 @@ public class MapsActivity extends AppCompatActivity
 
         new DataFetcher().execute(Parking.URL_PARKING, Parking.class.toString());
         new DataFetcher().execute(Attrait.URL_ATTRAIT, Attrait.class.toString());
+        new DataFetcher().execute(Zap.URL_ZAP, Zap.class.toString());
         MapUtils.init(getResources());
 
         gpsTracker = new GPSTracker(getApplicationContext());
