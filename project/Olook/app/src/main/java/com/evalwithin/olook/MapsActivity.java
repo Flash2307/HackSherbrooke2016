@@ -1,8 +1,5 @@
 package com.evalwithin.olook;
 
-import android.app.FragmentManager;
-import android.content.Context;
-import android.app.Fragment;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
@@ -18,22 +15,17 @@ import android.widget.RelativeLayout;
 
 import com.evalwithin.olook.Data.Attrait;
 import com.evalwithin.olook.Data.Parking;
-import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.BitmapDescriptor;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.MarkerOptions;
-import android.support.design.widget.NavigationView;
 
 public class MapsActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, OnMapReadyCallback {
+        implements NavigationView.OnNavigationItemSelectedListener, OnMapReadyCallback, GPSListener {
 
-    private GPSTracker tracker;
+    private GPSTracker gpsTracker;
     private OrientationTracker orientationTracker;
 
     private static String TAG = MapsActivity.class.getSimpleName();
@@ -70,7 +62,7 @@ public class MapsActivity extends AppCompatActivity
         new DataFetcher().execute(Attrait.URL_ATTRAIT, Attrait.class.toString());
         MapUtils.init(getResources());
 
-        tracker = new GPSTracker(getApplicationContext());
+        gpsTracker = new GPSTracker(getApplicationContext());
         orientationTracker = new OrientationTracker(getApplicationContext());
     }
 
@@ -93,15 +85,11 @@ public class MapsActivity extends AppCompatActivity
 
     @Override
     public void onMapReady(final GoogleMap googleMap) {
+        m_map = googleMap;
+        m_map.getUiSettings().setScrollGesturesEnabled(false);
+        centerMap(gpsTracker.getLocation());
+
         MapUtils.addInterestPoint(googleMap, new LatLng(-30, 140), "Nice area!");
-
-        Location myLocation;
-        while (tracker.getLocation() == null);
-        myLocation = tracker.getLocation();
-        LatLng myLatLng = new LatLng(myLocation.getLatitude(), myLocation.getLongitude());
-        MapUtils.setMyLocation(googleMap, myLatLng);
-        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(myLatLng, 15f));
-
         googleMap.setOnCameraChangeListener(new GoogleMap.OnCameraChangeListener() {
             float maxLevel = 18f;
             float minLevel = 15f;
@@ -119,8 +107,7 @@ public class MapsActivity extends AppCompatActivity
 
         // rotate 90 degrees
         CameraPosition oldPos = googleMap.getCameraPosition();
-        CameraPosition pos = CameraPosition.builder(oldPos).bearing(245.0F)
-                .build();
+        CameraPosition pos = CameraPosition.builder(oldPos).bearing(245.0F).build();
         googleMap.moveCamera(CameraUpdateFactory.newCameraPosition(pos));
     }
 
@@ -156,5 +143,19 @@ public class MapsActivity extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    @Override
+    public void onGPSLocationChanged(Location newLocation) {
+        centerMap(newLocation);
+    }
+
+    private void centerMap(Location location) {
+        if(location == null)
+            return;
+
+        LatLng myLatLng = new LatLng(location.getLatitude(), location.getLongitude());
+        MapUtils.setMyLocation(m_map, myLatLng);
+        m_map.moveCamera(CameraUpdateFactory.newLatLngZoom(myLatLng, 15f));
     }
 }
