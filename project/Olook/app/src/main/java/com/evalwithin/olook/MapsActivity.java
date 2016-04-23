@@ -96,8 +96,7 @@ public class MapsActivity extends AppCompatActivity
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem menuItem)
-    {
+    public boolean onOptionsItemSelected(MenuItem menuItem) {
         menuItem.setChecked(!menuItem.isChecked());
         return false;
     }
@@ -213,6 +212,8 @@ public class MapsActivity extends AppCompatActivity
     @Override
     public void onGPSLocationChanged(Location newLocation) {
         centerMap(newLocation);
+        LatLng ll = new LatLng(newLocation.getLatitude(), newLocation.getLongitude());
+        MapUtils.setMyLocation(m_map, ll);
     }
 
     private void centerMap(Location location) {
