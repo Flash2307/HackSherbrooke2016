@@ -15,7 +15,11 @@ import android.widget.RelativeLayout;
 
 import com.evalwithin.olook.Data.Attrait;
 import com.evalwithin.olook.Data.Parking;
+<<<<<<< HEAD
 import com.evalwithin.olook.Data.Zap;
+import com.google.android.gms.maps.CameraUpdate;
+=======
+>>>>>>> bbd20b84919bbca29e5b4ad97f99108220dc934a
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
