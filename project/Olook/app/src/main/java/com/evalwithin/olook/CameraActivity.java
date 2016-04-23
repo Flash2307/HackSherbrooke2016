@@ -21,6 +21,9 @@ public class CameraActivity extends AppCompatActivity implements NavigationView.
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_camera);
         mLayout = (RelativeLayout) findViewById(R.id.cameraLayout);
+
+        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        navigationView.setNavigationItemSelectedListener(this);
     }
 
     @Override
@@ -55,7 +58,7 @@ public class CameraActivity extends AppCompatActivity implements NavigationView.
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_view) {
+        if (id == R.id.nav_camera) {
             Intent myIntent = new Intent(this, MapsActivity.class);
             this.startActivity(myIntent);
         } else if (id == R.id.nav_manage) {
@@ -64,7 +67,7 @@ public class CameraActivity extends AppCompatActivity implements NavigationView.
 
         }
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout1);
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout2);
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
