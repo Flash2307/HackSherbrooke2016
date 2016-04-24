@@ -21,7 +21,7 @@ public class Attrait extends AreaOfInterest
 
     public Attrait(double locX, double locY, String locName, String siteWeb, String phoneNumber)
     {
-        super(locX, locY, locName);
+        super(locX, locY, locName, "<a href='" + siteWeb + "'>" + siteWeb + "</a><br /><b><a href='tel:" + phoneNumber.toString() + "'>" + phoneNumber.toString() + "</a></b>");
         this.siteWeb = siteWeb;
         this.phoneNumber = phoneNumber;
     }

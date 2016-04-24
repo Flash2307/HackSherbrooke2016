@@ -339,7 +339,7 @@ public class MapsActivity extends AppCompatActivity
             MapUtils.IconIndex idx = MapUtils.getIconIndex(key);
             ArrayList<Marker> markerList = new ArrayList<>();
             for (AreaOfInterest area : data.get(key)) {
-                Marker marker = MapUtils.addInterestPoint(mMap, new LatLng(area.getLocY(), area.getLocX()), idx, area.getLocationName());
+                Marker marker = MapUtils.addInterestPoint(mMap, new LatLng(area.getLocY(), area.getLocX()), idx, area.getLocationName(), area.getLocationDesc());
                 markerList.add(marker);
             }
             markerMap.put(key, markerList);

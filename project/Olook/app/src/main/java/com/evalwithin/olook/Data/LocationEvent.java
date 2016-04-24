@@ -29,7 +29,7 @@ public class LocationEvent extends AreaOfInterest
 
     public LocationEvent(double locX, double locY, String locName, String lieu, String siteWeb, String phoneNumber)
     {
-        super(0, 0, locName);
+        super(0, 0, locName, "<a href='" + siteWeb + "'>" + siteWeb + "</a><br /><b><a href='tel:" + phoneNumber.toString() + "'>" + phoneNumber.toString() + "</a></b><br />" + lieu);
 
         this.phoneNumber = phoneNumber;
         this.siteWeb = siteWeb;

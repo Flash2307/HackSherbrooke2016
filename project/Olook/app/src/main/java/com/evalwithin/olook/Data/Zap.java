@@ -13,7 +13,7 @@ public class Zap extends AreaOfInterest implements Serializable
 
     public Zap(double locX, double locY, String name)
     {
-        super(locX, locY, name);
+        super(locX, locY, name, "Point d'accès WIFI gratuit offert par ZAP!");
     }
 
     public static ArrayList<AreaOfInterest> parseString(String dataString)

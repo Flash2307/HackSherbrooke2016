@@ -75,8 +75,8 @@ public class MapUtils {
         marker = map.addMarker(markerOptions);
     }
 
-    static Marker addInterestPoint(GoogleMap map, LatLng coord, IconIndex icon, String description) {
-        MarkerOptions marker = new MarkerOptions().position(coord).title(description);
+    static Marker addInterestPoint(GoogleMap map, LatLng coord, IconIndex icon, String title, String description) {
+        MarkerOptions marker = new MarkerOptions().position(coord).title(title).snippet(description);
         marker.icon(iconImages[icon.value]);
         Marker newMarker = map.addMarker(marker);
         return newMarker;

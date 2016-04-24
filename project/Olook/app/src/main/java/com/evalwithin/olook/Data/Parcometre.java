@@ -18,7 +18,7 @@ public class Parcometre extends AreaOfInterest
 
     public Parcometre(double locX, double locY, String name)
     {
-        super(locX, locY, name);
+        super(locX, locY, name, "Horodateur.");
     }
 
     public static ArrayList<AreaOfInterest> parseString(String dataString)
