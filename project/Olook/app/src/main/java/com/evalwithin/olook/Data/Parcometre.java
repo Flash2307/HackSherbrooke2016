@@ -11,14 +11,14 @@ import java.util.ArrayList;
 /**
  * Created by Pascal on 23/04/2016.
  */
-public class Parking extends AreaOfInterest
+public class Parcometre extends AreaOfInterest
 {
-    public final static String PARKING_FILENAME = "ParkingData.dat";
-    public final static String URL_PARKING = "http://donnees.ville.sherbrooke.qc.ca/storage/f/2015-04-15T12%3A24%3A53.719Z/stationnementpublic.json";
+    public final static String PARCOMETRE_FILENAME = "ParcometreData.dat";
+    public final static String URL_PARCOMETRE = " http://donnees.ville.sherbrooke.qc.ca/storage/f/2015-04-15T12%3A18%3A31.523Z/horodateur.json";
 
-    public Parking(double locX, double locY, String parkingName)
+    public Parcometre(double locX, double locY, String name)
     {
-        super(locX, locY, parkingName);
+        super(locX, locY, name);
     }
 
     public static ArrayList<AreaOfInterest> parseJSON(String jsonString)
@@ -34,9 +34,9 @@ public class Parking extends AreaOfInterest
 
                 double locX = properties.optDouble("x", 0);
                 double locY = properties.optDouble("y", 0);
-                String name = properties.getString("NOM");
+                String name = properties.optString("TYPE_resolved", "");
 
-                parkingList.add(new Parking(locX, locY, name));
+                parkingList.add(new Parcometre(locX, locY, name));
             }
             return parkingList;
         }
