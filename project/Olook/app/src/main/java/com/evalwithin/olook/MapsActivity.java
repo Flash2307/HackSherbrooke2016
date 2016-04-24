@@ -8,6 +8,8 @@ import android.app.Fragment;
 import android.content.Intent;
 import android.location.Location;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -16,6 +18,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.TextView;
 
 import com.evalwithin.olook.Data.AreaOfInterest;
 import com.evalwithin.olook.Data.DataManager;
@@ -44,6 +48,11 @@ public class MapsActivity extends AppCompatActivity
     private GoogleMap mMap;
     private Marker mLastOpenned = null;
     private Compass mCompass;
+
+    private View mBottomSheet;
+    private TextView mTitle;
+    private TextView mDescription;
+    private BottomSheetBehavior mBottomSheetBehavior;
 
     Location lastDatapoint = null;
 
@@ -92,6 +101,24 @@ public class MapsActivity extends AppCompatActivity
         cameraItem.setTitle(R.string.camera);
 
         mCompass = (Compass) findViewById(R.id.compass);
+
+        mTitle = (TextView) findViewById(R.id.bottom_sheet_title);
+        mDescription = (TextView) findViewById(R.id.bottom_sheet_description);
+        mBottomSheet = findViewById( R.id.bottom_sheet );
+        mBottomSheetBehavior = BottomSheetBehavior.from(mBottomSheet);
+
+        mBottomSheetBehavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
+            @Override
+            public void onStateChanged(@NonNull View bottomSheet, int newState) {
+                if (newState == BottomSheetBehavior.STATE_DRAGGING) {
+                    mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+                }
+            }
+
+            @Override
+            public void onSlide(@NonNull View bottomSheet, float slideOffset) {
+            }
+        });
     }
 
 
@@ -139,20 +166,28 @@ public class MapsActivity extends AppCompatActivity
             public boolean onMarkerClick(Marker marker) {
                 if (mLastOpenned != null) {
 
-                    //mLastOpenned.hideInfoWindow();
-
-
-
+                    mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
                     if (mLastOpenned.equals(marker)) {
                         mLastOpenned = null;
+
                         return true;
                     }
                 }
 
                 //marker.showInfoWindow();
                 mLastOpenned = marker;
+                mTitle.setText(marker.getTitle());
+                mDescription.setText(marker.getSnippet());
+                mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
 
                 return true;
+            }
+        });
+
+        mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
+            @Override
+            public void onMapClick(LatLng latLng) {
+                mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
             }
         });
 
