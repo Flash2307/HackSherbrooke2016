@@ -5,6 +5,7 @@ import android.content.Context;
 import android.os.Process;
 import android.util.Log;
 
+import com.evalwithin.olook.FilterItems;
 import com.evalwithin.olook.OLookApp;
 import com.evalwithin.olook.R;
 
@@ -15,7 +16,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -33,6 +36,7 @@ public class DataManager extends Thread
     private String parkingName;
     private String zapName;
     private String parcometreName;
+    private String[] filterNames;
 
     private boolean dataFetched;
 
@@ -42,17 +46,13 @@ public class DataManager extends Thread
     {
         Context context = OLookApp.getAppContext();
 
-        attraitName = context.getResources().getString(R.string.filter_name_attrait);
-        parkingName = context.getResources().getString(R.string.filter_name_parking);
-        zapName = context.getResources().getString(R.string.filter_name_zap);
-        parcometreName = context.getResources().getString(R.string.filter_name_parcometre);
-
-
+        filterNames = context.getResources().getStringArray(R.array.filter_array);
         areaOfInterestMap = new HashMap<>();
-        areaOfInterestMap.put(attraitName, new ArrayList<AreaOfInterest>());
-        areaOfInterestMap.put(parkingName, new ArrayList<AreaOfInterest>());
-        areaOfInterestMap.put(zapName, new ArrayList<AreaOfInterest>());
-        areaOfInterestMap.put(parcometreName, new ArrayList<AreaOfInterest>());
+
+        for(String filterName : filterNames)
+        {
+            areaOfInterestMap.put(filterName, new ArrayList<AreaOfInterest>());
+        }
 
         dataFetched = false;
     }
@@ -110,7 +110,56 @@ public class DataManager extends Thread
 
     private void readFromFile()
     {
-        if (areaOfInterestMap.get(attraitName).isEmpty())
+        for(int i = 0; i < filterNames.length; i++)
+        {
+            String filterName = filterNames[i];
+            String fileName = "";
+            String url = "";
+            String className = "";
+
+            switch(i)
+            {
+                case 0:
+                    fileName = Attrait.ATTRAIT_FILENAME;
+                    url = Attrait.URL_ATTRAIT;
+                    className = Attrait.class.toString();
+                    break;
+                case 1:
+                    fileName = Parking.PARKING_FILENAME;
+                    url = Parking.URL_PARKING;
+                    className = Parking.class.toString();
+                    break;
+                case 2:
+                    fileName = Zap.ZAP_FILENAME;
+                    url = Zap.URL_ZAP;
+                    className = Zap.class.toString();
+                    break;
+                case 3:
+                    fileName = Parcometre.PARCOMETRE_FILENAME;
+                    url = Parcometre.URL_PARCOMETRE;
+                    className = Parcometre.class.toString();
+                    break;
+            }
+
+            if (areaOfInterestMap.get(filterName).isEmpty())
+            {
+
+
+                ArrayList<AreaOfInterest> file = readFile(fileName);
+                if (file != null)
+                {
+                    areaOfInterestMap.put(filterName, file);
+                }
+                else
+                {
+
+                    ArrayList<AreaOfInterest> list = updateData(url, fileName, className);
+                    areaOfInterestMap.put(filterName, list);
+                }
+            }
+        }
+
+        /*if (areaOfInterestMap.get(attraitName).isEmpty())
         {
             ArrayList<AreaOfInterest> fileAttrait = readFile(Attrait.ATTRAIT_FILENAME);
             if (fileAttrait != null)
@@ -164,7 +213,7 @@ public class DataManager extends Thread
                 ArrayList<AreaOfInterest> listParcometre = updateParcometre();
                 areaOfInterestMap.put(parcometreName, listParcometre);
             }
-        }
+        }*/
     }
 
     public Map<String, ArrayList<AreaOfInterest>> getAreaOfInterestValues(double locX, double locY, double radius)
@@ -285,6 +334,27 @@ public class DataManager extends Thread
             Log.e("IOException", e.toString());
             e.printStackTrace();
         }
+    }
+
+    private ArrayList<AreaOfInterest> updateData(String filename, String url, String className)
+    {
+        String stringData = getDataString(url);
+
+        try
+        {
+            Class clazz = Class.forName(className);
+            Method method = clazz.getMethod("parseString", String.class);
+            ArrayList<AreaOfInterest> data = (ArrayList<AreaOfInterest>) method.invoke(null, stringData);
+
+            writeFile(data, filename);
+
+            return data;
+        } catch(Exception e)
+        {
+
+        }
+
+        return null;
     }
 
     private ArrayList<AreaOfInterest> updateAttrait()
