@@ -20,7 +20,7 @@ public class Restaurant extends AreaOfInterest
 
     public Restaurant (double locX, double locY, String name, String phoneNumber)
     {
-        super(locX, locY, name);
+        super(locX, locY, name, "");
         this.phoneNumber = phoneNumber;
     }
 

@@ -18,7 +18,7 @@ public class Parking extends AreaOfInterest
 
     public Parking(double locX, double locY, String parkingName)
     {
-        super(locX, locY, parkingName);
+        super(locX, locY, parkingName, "Stationnement publique.");
     }
 
     public static ArrayList<AreaOfInterest> parseString(String dataString)
