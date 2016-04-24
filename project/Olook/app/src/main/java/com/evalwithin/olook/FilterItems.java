@@ -1,6 +1,7 @@
 package com.evalwithin.olook;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Vincent on 2016-04-23.
@@ -16,7 +17,7 @@ public class FilterItems {
         this.id = 0;
     }
 
-    public void addNames(ArrayList<String> names)
+    public void addFilters(List<String> names)
     {
         for (String name : names)
         {
