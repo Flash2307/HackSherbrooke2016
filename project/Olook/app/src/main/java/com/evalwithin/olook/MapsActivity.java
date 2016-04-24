@@ -1,9 +1,5 @@
 package com.evalwithin.olook;
 
-import android.app.FragmentManager;
-import android.content.ComponentName;
-import android.content.Context;
-import android.app.Fragment;
 import android.content.Intent;
 import android.location.Location;
 import android.os.Bundle;
@@ -12,14 +8,9 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.Toolbar;
-import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.SubMenu;
-import android.widget.ListView;
-import android.widget.RelativeLayout;
 
 import com.evalwithin.olook.Data.Attrait;
 import com.evalwithin.olook.Data.Parking;
@@ -37,16 +28,10 @@ public class MapsActivity extends AppCompatActivity
 
     private GPSTracker gpsTracker;
     private OrientationTracker orientationTracker;
-    private PopupMenu popupMenu;
 
     private static String TAG = MapsActivity.class.getSimpleName();
 
-    ListView m_drawerList;
-    RelativeLayout m_drawerPane;
-
-    private ActionBarDrawerToggle m_drawerToggle;
-    private DrawerLayout m_drawerLayout;
-    private GoogleMap m_map;
+    private GoogleMap mMap;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,11 +62,15 @@ public class MapsActivity extends AppCompatActivity
         gpsTracker = new GPSTracker(getApplicationContext());
         orientationTracker = new OrientationTracker(getApplicationContext());
         orientationTracker.addListener(this);
+
+        Menu menu = navigationView.getMenu();
+        MenuItem cameraItem = menu.findItem(R.id.nav_camera);
+        cameraItem.setIcon(R.drawable.ic_menu_camera);
+        cameraItem.setTitle(R.string.camera);
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-
         if(menu.size() == 0)
         {
             for(int i = 0; i < 5; i++)
@@ -91,7 +80,6 @@ public class MapsActivity extends AppCompatActivity
         }
 
         getMenuInflater().inflate(R.menu.main, menu);
-
         return true;
     }
 
@@ -114,17 +102,17 @@ public class MapsActivity extends AppCompatActivity
 
     @Override
     public void onMapReady(final GoogleMap googleMap) {
-        m_map = googleMap;
+        mMap = googleMap;
 
-        //m_map.getUiSettings().setScrollGesturesEnabled(false);
-        //m_map.getUiSettings().setCompassEnabled(false);
+        //mMap.getUiSettings().setScrollGesturesEnabled(false);
+        //mMap.getUiSettings().setCompassEnabled(false);
 
         Location loc = gpsTracker.getLocation();
         LatLng ll = new LatLng(loc.getLatitude(), loc.getLongitude());
 
         centerMap(loc, 15);
 
-        MapUtils.setMyLocation(m_map, ll);
+        MapUtils.setMyLocation(mMap, ll);
         MapUtils.addInterestPoint(googleMap, new LatLng(-30, 140), "Nice area!");
 
         googleMap.setOnCameraChangeListener(new GoogleMap.OnCameraChangeListener() {
@@ -220,7 +208,7 @@ public class MapsActivity extends AppCompatActivity
             return;
 
         LatLng myLatLng = new LatLng(location.getLatitude(), location.getLongitude());
-        m_map.moveCamera(CameraUpdateFactory.newLatLng(myLatLng));
+        mMap.moveCamera(CameraUpdateFactory.newLatLng(myLatLng));
     }
 
     private void centerMap(Location location, float zoom) {
@@ -228,6 +216,6 @@ public class MapsActivity extends AppCompatActivity
             return;
 
         LatLng myLatLng = new LatLng(location.getLatitude(), location.getLongitude());
-        m_map.moveCamera(CameraUpdateFactory.newLatLngZoom(myLatLng, zoom));
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(myLatLng, zoom));
     }
 }
