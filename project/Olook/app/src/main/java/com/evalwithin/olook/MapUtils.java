@@ -12,6 +12,7 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class MapUtils {
     public enum IconIndex {USER(0), EVENT(1), PARKING(2), PARKMETER(3), WIFI(4), INTEREST(5), RESTAURANT(6), BUS(7); int value; IconIndex(int val){value = val;}}
@@ -20,6 +21,8 @@ public class MapUtils {
             R.drawable.wifi, R.drawable.park, R.drawable.restaurant, R.drawable.bus };
 
     static final BitmapDescriptor[] iconImages = new BitmapDescriptor[iconRessources.length];
+
+    static final HashMap<String, IconIndex> datasetIconIndexes = new HashMap<String, IconIndex>();
 
     //static final int ICON_MY_LOCATION = R.drawable.user;
     //static final int ICON_INTEREST_AREA = R.drawable.wifi;
@@ -36,6 +39,10 @@ public class MapUtils {
 
         for(int i = 0; i < iconRessources.length; ++i)
             iconImages[i] = BitmapDescriptorFactory.fromBitmap(BitmapFactory.decodeResource(res, iconRessources[i]));
+
+        datasetIconIndexes.put(res.getString(R.string.filter_name_attrait), IconIndex.INTEREST);
+        datasetIconIndexes.put(res.getString(R.string.filter_name_parking), IconIndex.PARKING);
+        datasetIconIndexes.put(res.getString(R.string.filter_name_zap), IconIndex.WIFI);
     }
 
     static void setMyLocation(GoogleMap map, LatLng coord) {
@@ -51,5 +58,10 @@ public class MapUtils {
         MarkerOptions marker = new MarkerOptions().position(coord).title(description);
         marker.icon(iconImages[icon.value]);
         map.addMarker(marker);
+    }
+
+    static IconIndex getIconIndex(String dataset){
+        IconIndex idx = datasetIconIndexes.get(dataset);
+        return idx;
     }
 }

@@ -17,6 +17,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.evalwithin.olook.Data.AreaOfInterest;
 import com.evalwithin.olook.Data.DataManager;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -25,6 +26,10 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
+
+import java.util.ArrayList;
+import java.util.Map;
+import java.util.Set;
 
 public class MapsActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, OnMapReadyCallback, GPSListener, OrientationListener {
@@ -67,8 +72,7 @@ public class MapsActivity extends AppCompatActivity
         filters.addFilter("Beauté");
 
         DataManager dataManager = DataManager.getInstance();
-        if (dataManager.getState() == Thread.State.NEW)
-            dataManager.start();
+        dataManager.start();
 
         gpsTracker = new GPSTracker(getApplicationContext());
         gpsTracker.addListener(this);
@@ -250,6 +254,17 @@ public class MapsActivity extends AppCompatActivity
     }
 
     private void fillMarkers(){
+        Location loc = gpsTracker.getLocation();
+        double radius = 5;
+        Map<String, ArrayList<AreaOfInterest>> data = DataManager.getInstance().getAreaOfInterestValues(loc.getLongitude(), loc.getLatitude(), radius);
 
+        Set<String> keys = data.keySet();
+
+        for (String key: keys) {
+            MapUtils.IconIndex idx = MapUtils.getIconIndex(key);
+            for (AreaOfInterest area : data.get(key)) {
+                MapUtils.addInterestPoint(mMap, new LatLng(area.getLocX(), area.getLocY()), idx, area.getLocationName());
+            }
+        }
     }
 }
