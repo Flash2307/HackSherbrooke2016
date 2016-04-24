@@ -216,9 +216,8 @@ public class MapsActivity extends AppCompatActivity
     }
 
     @Override
-    public void onOrientationChanged(float orientation) {
-        //System.out.println(orientation);
-        mCompass.updateDirection(orientation);
+    public void onOrientationChanged(float azimut, float pitch, float roll) {
+        mCompass.updateDirection(azimut);
     }
 
     @Override
