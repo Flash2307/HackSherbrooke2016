@@ -21,12 +21,12 @@ public class Parking extends AreaOfInterest
         super(locX, locY, parkingName);
     }
 
-    public static ArrayList<AreaOfInterest> parseJSON(String jsonString)
+    public static ArrayList<AreaOfInterest> parseString(String dataString)
     {
         ArrayList<AreaOfInterest> parkingList = new ArrayList<>();
         try
         {
-            JSONObject jObj = new JSONObject(jsonString);
+            JSONObject jObj = new JSONObject(dataString);
             JSONArray jArray = jObj.getJSONArray("features");
             for (int i = 0; i < jArray.length(); i++) {
                 JSONObject obj = jArray.getJSONObject(i);

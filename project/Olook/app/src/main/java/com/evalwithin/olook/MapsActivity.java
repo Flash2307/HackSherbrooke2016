@@ -76,11 +76,6 @@ public class MapsActivity extends AppCompatActivity
         filters = new FilterItems();
         filters.addFilters(Arrays.asList(filterNames));
 
-        /*filters = new FilterItems();
-        filters.addFilter(getResources().getString(R.string.filter_name_attrait));
-        filters.addFilter(getResources().getString(R.string.filter_name_parking));
-        filters.addFilter(getResources().getString(R.string.filter_name_zap));*/
-
         DataManager dataManager = DataManager.getInstance();
         if (dataManager.getState() == Thread.State.NEW)
             dataManager.start();

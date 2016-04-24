@@ -21,14 +21,15 @@ public class Parcometre extends AreaOfInterest
         super(locX, locY, name);
     }
 
-    public static ArrayList<AreaOfInterest> parseJSON(String jsonString)
+    public static ArrayList<AreaOfInterest> parseString(String dataString)
     {
         ArrayList<AreaOfInterest> parkingList = new ArrayList<>();
         try
         {
-            JSONObject jObj = new JSONObject(jsonString);
+            JSONObject jObj = new JSONObject(dataString);
             JSONArray jArray = jObj.getJSONArray("features");
-            for (int i = 0; i < jArray.length(); i++) {
+            for (int i = 0; i < jArray.length(); i++)
+            {
                 JSONObject obj = jArray.getJSONObject(i);
                 JSONObject properties = obj.getJSONObject("properties");
 
@@ -42,7 +43,7 @@ public class Parcometre extends AreaOfInterest
         }
         catch (JSONException e)
         {
-            Log.e("Parking JSONException", e.toString());
+            Log.e("Parkmeter JSONException", e.toString());
         }
         return null;
     }
