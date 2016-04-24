@@ -265,7 +265,7 @@ public class MapsActivity extends AppCompatActivity
 
     private void fillMarkers(){
         Location loc = gpsTracker.getLocation();
-        double radius = 5;
+        double radius = 2500;
         Map<String, ArrayList<AreaOfInterest>> data = DataManager.getInstance().getAreaOfInterestValues(loc.getLongitude(), loc.getLatitude(), radius);
 
         Set<String> keys = data.keySet();
