@@ -1,5 +1,6 @@
 package com.evalwithin.olook;
 
+import android.app.Activity;
 import android.app.FragmentManager;
 import android.content.ComponentName;
 import android.content.Context;
@@ -53,6 +54,7 @@ public class MapsActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -62,12 +64,13 @@ public class MapsActivity extends AppCompatActivity
         drawer.setDrawerListener(toggle);
         toggle.syncState();
 
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        RadiusNavigationView navigationView = (RadiusNavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
+
         mapFragment.getMapAsync(this);
 
         new DataFetcher().execute(Parking.URL_PARKING, Parking.class.toString());
@@ -76,9 +79,13 @@ public class MapsActivity extends AppCompatActivity
         MapUtils.init(getResources());
 
         gpsTracker = new GPSTracker(getApplicationContext());
+        gpsTracker.addListener(this);
+
         orientationTracker = new OrientationTracker(getApplicationContext());
         orientationTracker.addListener(this);
     }
+
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -158,7 +165,7 @@ public class MapsActivity extends AppCompatActivity
                     cumulativeZoom = 0;
                 }
 
-                if (needToCenter) {
+                if (true) {//needToCenter) {
                     centerMap(gpsTracker.getLocation());
                 }
 
