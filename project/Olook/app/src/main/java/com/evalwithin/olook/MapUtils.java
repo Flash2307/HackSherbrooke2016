@@ -16,10 +16,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class MapUtils {
-    public enum IconIndex {USER(0), INTEREST(1), PARKING(2), WIFI(3), PARKMETER(4), EVENT(5), RESTAURANT(6), BUS(7); int value; IconIndex(int val){value = val;}}
+    public enum IconIndex {USER(0), INTEREST(1), PARKING(2), WIFI(3), PARKMETER(4), RESTAURANT(5), EVENT(6), BUS(7); int value; IconIndex(int val){value = val;}}
 
     static final int[] iconRessources = { R.drawable.user, R.drawable.park, R.drawable.parking, R.drawable.wifi,
-            R.drawable.parking_payant, R.drawable.event, R.drawable.restaurant, R.drawable.bus };
+            R.drawable.parking_payant, R.drawable.restaurant, R.drawable.event, R.drawable.bus };
 
     static final BitmapDescriptor[] iconImages = new BitmapDescriptor[iconRessources.length];
 
