@@ -1,9 +1,12 @@
 package com.evalwithin.olook;
 
 import android.content.Context;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Rect;
+import android.graphics.RectF;
 import android.util.AttributeSet;
 import android.view.View;
 
@@ -12,6 +15,7 @@ public class Compass extends View {
     private float direction = 0;
     private Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
     private boolean firstDraw;
+    private RectF dstNeedle = new RectF();
 
     public Compass(Context context) {
         super(context);
@@ -29,9 +33,9 @@ public class Compass extends View {
     }
 
     private void init(){
-        paint.setStyle(Paint.Style.STROKE);
-        paint.setStrokeWidth(3);
-        paint.setColor(Color.BLACK);
+        paint.setStyle(Paint.Style.FILL);
+        paint.setStrokeWidth(5);
+        paint.setColor(Color.WHITE);
         paint.setTextSize(30);
 
         firstDraw = true;
@@ -55,16 +59,18 @@ public class Compass extends View {
             radiusCompass = (float) (cxCompass * 0.9);
         }
         canvas.drawCircle(cxCompass, cyCompass, radiusCompass, paint);
-        canvas.drawRect(0, 0, getMeasuredWidth(), getMeasuredHeight(), paint);
+
+        dstNeedle.set(cxCompass-10, (int)(cyCompass - radiusCompass), cxCompass+10, cyCompass);
 
         if(!firstDraw){
+            paint.setColor(Color.RED);
 
-            canvas.drawLine(cxCompass, cyCompass,
-                    (float)(cxCompass + radiusCompass * Math.sin((double)(-direction) * 3.14/180)),
-                    (float)(cyCompass - radiusCompass * Math.cos((double)(-direction) * 3.14/180)),
-                    paint);
+            canvas.save();
+            canvas.rotate((float)(direction * 180/3.14), cxCompass, cyCompass);
+            canvas.drawOval(dstNeedle, paint);
+            canvas.restore();
 
-            canvas.drawText(String.valueOf(direction), cxCompass, cyCompass, paint);
+            paint.setColor(Color.WHITE);
         }
 
     }
