@@ -16,11 +16,11 @@ public class Zap extends AreaOfInterest implements Serializable
         super(locX, locY, name);
     }
 
-    public static ArrayList<AreaOfInterest> parseCSV(String csvString)
+    public static ArrayList<AreaOfInterest> parseString(String dataString)
     {
         ArrayList<AreaOfInterest> zapList = new ArrayList<>();
 
-        String[] lines = csvString.split("\n");
+        String[] lines = dataString.split("\n");
 
         //First line is header
         String[] header = lines[0].split(",");

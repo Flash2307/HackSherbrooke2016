@@ -34,11 +34,12 @@ public class Attrait extends AreaOfInterest
         return phoneNumber;
     }
 
-    public static ArrayList<AreaOfInterest> parseJSON(String jsonString) {
+    public static ArrayList<AreaOfInterest> parseString(String dataString)
+    {
         ArrayList<AreaOfInterest> listAttrait = new ArrayList<>();
         try
         {
-            JSONObject jObj = new JSONObject(jsonString);
+            JSONObject jObj = new JSONObject(dataString);
             JSONArray jArray = jObj.getJSONArray("response");
             for (int i = 0; i < jArray.length(); i++) {
                 JSONObject obj = jArray.getJSONObject(i);
