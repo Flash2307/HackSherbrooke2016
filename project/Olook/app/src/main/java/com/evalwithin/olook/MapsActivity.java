@@ -13,18 +13,11 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.Toolbar;
-import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.SubMenu;
-import android.widget.ListView;
-import android.widget.RelativeLayout;
 
-import com.evalwithin.olook.Data.Attrait;
-import com.evalwithin.olook.Data.Parking;
-import com.evalwithin.olook.Data.Zap;
+import com.evalwithin.olook.Data.DataManager;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -36,19 +29,13 @@ import com.google.android.gms.maps.model.LatLng;
 public class MapsActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, OnMapReadyCallback, GPSListener, OrientationListener {
 
-
     private GPSTracker gpsTracker;
     private OrientationTracker orientationTracker;
-    private PopupMenu popupMenu;
+    private FilterItems filters;
 
     private static String TAG = MapsActivity.class.getSimpleName();
 
-    ListView m_drawerList;
-    RelativeLayout m_drawerPane;
-
-    private ActionBarDrawerToggle m_drawerToggle;
-    private DrawerLayout m_drawerLayout;
-    private GoogleMap m_map;
+    private GoogleMap mMap;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,40 +59,48 @@ public class MapsActivity extends AppCompatActivity
                 .findFragmentById(R.id.map);
 
         mapFragment.getMapAsync(this);
-
-        new DataFetcher().execute(Parking.URL_PARKING, Parking.class.toString());
-        new DataFetcher().execute(Attrait.URL_ATTRAIT, Attrait.class.toString());
-        new DataFetcher().execute(Zap.URL_ZAP, Zap.class.toString());
         MapUtils.init(getResources());
+
+        filters = new FilterItems();
+        filters.addFilter("Test 1");
+        filters.addFilter("Beauté");
+
+        DataManager dataManager = DataManager.getInstance();
+        dataManager.start();
 
         gpsTracker = new GPSTracker(getApplicationContext());
         gpsTracker.addListener(this);
 
         orientationTracker = new OrientationTracker(getApplicationContext());
         orientationTracker.addListener(this);
+
+        Menu menu = navigationView.getMenu();
+        MenuItem cameraItem = menu.findItem(R.id.nav_camera);
+        cameraItem.setIcon(R.drawable.ic_menu_camera);
+        cameraItem.setTitle(R.string.camera);
     }
 
 
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-
         if(menu.size() == 0)
         {
-            for(int i = 0; i < 5; i++)
-            {
-                menu.add(0, i, Menu.NONE, "item " + i).setCheckable(true);
+            for (FilterItems.FilterItem filterItem : filters.getFilterItems()) {
+                menu.add(0, filterItem.getId(), Menu.NONE, filterItem.getName()).setCheckable(true).setChecked(true);
             }
         }
 
         getMenuInflater().inflate(R.menu.main, menu);
-
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem menuItem) {
         menuItem.setChecked(!menuItem.isChecked());
+
+        filters.changeActive(menuItem.getItemId());
+
         return false;
     }
 
@@ -121,19 +116,20 @@ public class MapsActivity extends AppCompatActivity
 
     @Override
     public void onMapReady(final GoogleMap googleMap) {
-        m_map = googleMap;
-        m_map.getUiSettings().setScrollGesturesEnabled(false);
-        m_map.getUiSettings().setRotateGesturesEnabled(false);
 
-        //m_map.getUiSettings().setScrollGesturesEnabled(false);
-        //m_map.getUiSettings().setCompassEnabled(false);
+        mMap = googleMap;
+        mMap.getUiSettings().setScrollGesturesEnabled(false);
+        mMap.getUiSettings().setRotateGesturesEnabled(false);
+
+        //mMap.getUiSettings().setScrollGesturesEnabled(false);
+        //mMap.getUiSettings().setCompassEnabled(false);
 
         Location loc = gpsTracker.getLocation();
         LatLng ll = new LatLng(loc.getLatitude(), loc.getLongitude());
 
         centerMap(loc, 15);
 
-        MapUtils.setMyLocation(m_map, ll);
+        MapUtils.setMyLocation(mMap, ll);
         MapUtils.addInterestPoint(googleMap, new LatLng(-30, 140), "Nice area!");
 
         googleMap.setOnCameraChangeListener(new GoogleMap.OnCameraChangeListener() {
@@ -213,7 +209,7 @@ public class MapsActivity extends AppCompatActivity
     public void onGPSLocationChanged(Location newLocation) {
         centerMap(newLocation);
         LatLng ll = new LatLng(newLocation.getLatitude(), newLocation.getLongitude());
-        MapUtils.setMyLocation(m_map, ll);
+        MapUtils.setMyLocation(mMap, ll);
     }
 
     private void centerMap(Location location) {
@@ -221,7 +217,7 @@ public class MapsActivity extends AppCompatActivity
             return;
 
         LatLng myLatLng = new LatLng(location.getLatitude(), location.getLongitude());
-        m_map.moveCamera(CameraUpdateFactory.newLatLng(myLatLng));
+        mMap.moveCamera(CameraUpdateFactory.newLatLng(myLatLng));
     }
 
     private void centerMap(Location location, float zoom) {
@@ -229,6 +225,6 @@ public class MapsActivity extends AppCompatActivity
             return;
 
         LatLng myLatLng = new LatLng(location.getLatitude(), location.getLongitude());
-        m_map.moveCamera(CameraUpdateFactory.newLatLngZoom(myLatLng, zoom));
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(myLatLng, zoom));
     }
 }
