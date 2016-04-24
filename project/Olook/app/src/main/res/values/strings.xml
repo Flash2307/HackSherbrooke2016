@@ -7,10 +7,6 @@
     <string name="drawer_open">open</string>
     <string name="drawer_close">close</string>
     <string name="action_settings">Settings</string>
-    <string name="filter_name_attrait">Attraits</string>
-    <string name="filter_name_parking">Stationnement public</string>
-    <string name="filter_name_zap">ZAP</string>
-    <string name="filter_name_parcometre">Parcomètre</string>
 
     <string-array name="filter_array">
         <item>Attraits</item>

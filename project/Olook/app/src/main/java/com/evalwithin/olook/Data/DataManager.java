@@ -6,6 +6,7 @@ import android.os.Process;
 import android.util.Log;
 
 import com.evalwithin.olook.FilterItems;
+import com.evalwithin.olook.MapUtils;
 import com.evalwithin.olook.OLookApp;
 import com.evalwithin.olook.R;
 
@@ -139,6 +140,8 @@ public class DataManager extends Thread
                     url = Parcometre.URL_PARCOMETRE;
                     className = Parcometre.class.toString();
                     break;
+                default:
+                    assert(false);
             }
 
             if (areaOfInterestMap.get(filterName).isEmpty())
@@ -235,7 +238,7 @@ public class DataManager extends Thread
 
             for(AreaOfInterest location : locations)
             {
-                if(radius >= distanceInMeters(location.getLocX(), locX, location.getLocY(), locY))
+                if(radius >= MapUtils.getDistance(location.getLocX(), locX, location.getLocY(), locY))
                 {
                     sortedLocations.add(location);
                 }
@@ -248,19 +251,6 @@ public class DataManager extends Thread
         }
 
         return sortedLocationMap;
-    }
-
-    private double distanceInMeters(double x1, double x2, double y1, double y2)
-    {
-        double R = 6378.137;
-        double dLat = (y2 - y1) * Math.PI / 180;
-        double dLon = (x2 - x1) * Math.PI / 180;
-        double a = Math.sin(dLat/2) * Math.sin(dLat/2) +
-                Math.cos(y1 * Math.PI / 180) * Math.cos(y2 * Math.PI / 180)
-                        * Math.sin(dLon/2) * Math.sin(dLon/2);
-        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-        double d = R * c;
-        return d * 1000;
     }
 
     private String getDataString(String url)
