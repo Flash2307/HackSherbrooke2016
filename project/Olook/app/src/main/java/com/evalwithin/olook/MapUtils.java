@@ -3,6 +3,7 @@ package com.evalwithin.olook;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.Icon;
 
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.BitmapDescriptor;
@@ -40,10 +41,24 @@ public class MapUtils {
         for(int i = 0; i < iconRessources.length; ++i)
             iconImages[i] = BitmapDescriptorFactory.fromBitmap(BitmapFactory.decodeResource(res, iconRessources[i]));
 
-        datasetIconIndexes.put(res.getString(R.string.filter_name_attrait), IconIndex.INTEREST);
-        datasetIconIndexes.put(res.getString(R.string.filter_name_parking), IconIndex.PARKING);
-        datasetIconIndexes.put(res.getString(R.string.filter_name_zap), IconIndex.WIFI);
-        datasetIconIndexes.put(res.getString(R.string.filter_name_parcometre), IconIndex.PARKMETER);
+        String[] filterNames = res.getStringArray(R.array.filter_array);
+
+        for(int i = 0; i < filterNames.length; i++)
+        {
+            datasetIconIndexes.put(filterNames[i], IconIndex.values()[i+1]);
+        }
+    }
+
+    public static double getDistance(double long1, double long2, double lat1, double lat2)
+    {
+        double R = 6378.137;
+        double deltaLat = (lat2 - lat1) * Math.PI / 180;
+        double deltaLong = (long2 - long1) * Math.PI / 180;
+        double a = Math.sin(deltaLat/2) * Math.sin(deltaLat/2) +
+                Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180)
+                        * Math.sin(deltaLong/2) * Math.sin(deltaLong/2);
+        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+        return R * c * 1000;
     }
 
     static void setMyLocation(GoogleMap map, LatLng coord) {
