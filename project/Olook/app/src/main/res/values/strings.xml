@@ -2,7 +2,8 @@
     <string name="app_name">OLook</string>
     <string name="google_app_id">OLook</string>
     <string name="title_activity_maps">Map</string>
-    <string name="hello_blank_fragment">Hello World</string>
+    <string name="map">Map</string>
+    <string name="camera">Camera</string>
     <string name="drawer_open">open</string>
     <string name="drawer_close">close</string>
     <string name="action_settings">Settings</string>

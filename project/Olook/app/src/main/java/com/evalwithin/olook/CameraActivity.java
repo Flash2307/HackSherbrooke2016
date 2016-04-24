@@ -6,6 +6,7 @@ import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
@@ -21,6 +22,14 @@ public class CameraActivity extends AppCompatActivity implements NavigationView.
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_camera);
         mLayout = (RelativeLayout) findViewById(R.id.cameraLayout);
+
+        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        navigationView.setNavigationItemSelectedListener(this);
+
+        Menu menu = navigationView.getMenu();
+        MenuItem cameraItem = menu.findItem(R.id.nav_camera);
+        cameraItem.setIcon(R.drawable.ic_place_black);
+        cameraItem.setTitle(R.string.map);
     }
 
     @Override
@@ -55,7 +64,7 @@ public class CameraActivity extends AppCompatActivity implements NavigationView.
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_view) {
+        if (id == R.id.nav_camera) {
             Intent myIntent = new Intent(this, MapsActivity.class);
             this.startActivity(myIntent);
         } else if (id == R.id.nav_manage) {
@@ -64,7 +73,7 @@ public class CameraActivity extends AppCompatActivity implements NavigationView.
 
         }
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout1);
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout2);
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
