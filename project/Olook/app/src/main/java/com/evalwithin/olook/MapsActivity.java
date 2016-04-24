@@ -194,8 +194,14 @@ public class MapsActivity extends AppCompatActivity
                 }
 
                 mLastOpenned = marker;
-                mTitle.setText(Html.fromHtml(marker.getTitle()));
-                mDescription.setText(Html.fromHtml(marker.getSnippet()));
+                if(marker.getTitle() != null)
+                    mTitle.setText(Html.fromHtml(marker.getTitle()));
+                else
+                    mTitle.setText(R.string.no_title);
+                if(marker.getSnippet() != null)
+                    mDescription.setText(Html.fromHtml(marker.getSnippet()));
+                else
+                    mDescription.setText(R.string.no_description);
                 mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
 
                 return true;
