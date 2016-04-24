@@ -11,7 +11,7 @@ import java.util.ArrayList;
 /**
  * Created by Pascal on 23/04/2016.
  */
-public class Parking extends Location
+public class Parking extends AreaOfInterest
 {
     public final static String PARKING_FILENAME = "ParkingData.dat";
     public final static String URL_PARKING = "http://donnees.ville.sherbrooke.qc.ca/storage/f/2015-04-15T12%3A24%3A53.719Z/stationnementpublic.json";
@@ -21,8 +21,8 @@ public class Parking extends Location
         super(locX, locY, parkingName);
     }
 
-    public static ArrayList<Location> parseJSON(String jsonString) {
-        ArrayList<Location> parkingList = new ArrayList<>();
+    public static ArrayList<AreaOfInterest> parseJSON(String jsonString) {
+        ArrayList<AreaOfInterest> parkingList = new ArrayList<>();
         try
         {
             JSONObject jObj = new JSONObject(jsonString);

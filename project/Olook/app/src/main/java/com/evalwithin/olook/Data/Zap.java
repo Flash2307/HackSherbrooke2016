@@ -6,7 +6,7 @@ import java.util.ArrayList;
 /**
  * Created by Pascal on 23/04/2016.
  */
-public class Zap extends Location implements Serializable
+public class Zap extends AreaOfInterest implements Serializable
 {
     public final static String ZAP_FILENAME = "ZapData.dat";
     public final static String URL_ZAP = "https://www.donneesquebec.ca/recherche/dataset/5cc3989e-442b-4f25-8049-d39d44421d6f/resource/0106c060-9559-4ce7-9987-41ec051a1df8/download/nodes.csv";
@@ -16,9 +16,9 @@ public class Zap extends Location implements Serializable
         super(locX, locY, name);
     }
 
-    public static ArrayList<Location> parseCSV(String csvString)
+    public static ArrayList<AreaOfInterest> parseCSV(String csvString)
     {
-        ArrayList<Location> zapList = new ArrayList<>();
+        ArrayList<AreaOfInterest> zapList = new ArrayList<>();
 
         String[] lines = csvString.split("\n");
 

@@ -5,7 +5,6 @@ import android.content.Context;
 import android.os.Process;
 import android.util.Log;
 
-import com.evalwithin.olook.FilterItems;
 import com.evalwithin.olook.OLookApp;
 import com.evalwithin.olook.R;
 
@@ -34,8 +33,7 @@ public class DataManager extends Thread
     private String parkingName;
     private String zapName;
 
-    //ArrayList<ArrayList<Location>> locationsList;
-    Map<String, ArrayList<Location>> locationMap;
+    Map<String, ArrayList<AreaOfInterest>> areaOfInterestMap;
 
     /*
      * Arraylist ids - 0 : Attraits
@@ -51,10 +49,10 @@ public class DataManager extends Thread
         parkingName = context.getResources().getString(R.string.filter_name_parking);
         zapName = context.getResources().getString(R.string.filter_name_zap);
 
-        locationMap = new HashMap<>();
-        locationMap.put(attraitName, new ArrayList<Location>());
-        locationMap.put(parkingName, new ArrayList<Location>());
-        locationMap.put(zapName, new ArrayList<Location>());
+        areaOfInterestMap = new HashMap<>();
+        areaOfInterestMap.put(attraitName, new ArrayList<AreaOfInterest>());
+        areaOfInterestMap.put(parkingName, new ArrayList<AreaOfInterest>());
+        areaOfInterestMap.put(zapName, new ArrayList<AreaOfInterest>());
     }
 
     public static DataManager getInstance()
@@ -64,9 +62,9 @@ public class DataManager extends Thread
         return instance;
     }
 
-    public ArrayList<Location> getLocationList(String listName)
+    public ArrayList<AreaOfInterest> getLocationList(String listName)
     {
-        return locationMap.get(listName);
+        return areaOfInterestMap.get(listName);
     }
 
     @Override
@@ -75,30 +73,30 @@ public class DataManager extends Thread
         Process.setThreadPriority(Process.THREAD_PRIORITY_LOWEST);
         Context context = OLookApp.getAppContext();
 
-        if (locationMap.get(attraitName).isEmpty())
+        if (areaOfInterestMap.get(attraitName).isEmpty())
         {
-            ArrayList<Location> fileAttrait = readFile(Attrait.ATTRAIT_FILENAME);
+            ArrayList<AreaOfInterest> fileAttrait = readFile(Attrait.ATTRAIT_FILENAME);
             if (fileAttrait != null)
             {
-                locationMap.put(attraitName, fileAttrait);
+                areaOfInterestMap.put(attraitName, fileAttrait);
             }
         }
 
-        if (locationMap.get(parkingName).isEmpty())
+        if (areaOfInterestMap.get(parkingName).isEmpty())
         {
-            ArrayList<Location> fileParking = readFile(Parking.PARKING_FILENAME);
+            ArrayList<AreaOfInterest> fileParking = readFile(Parking.PARKING_FILENAME);
             if (fileParking != null)
             {
-                locationMap.put(parkingName, fileParking);
+                areaOfInterestMap.put(parkingName, fileParking);
             }
         }
 
-        if (locationMap.get(zapName).isEmpty())
+        if (areaOfInterestMap.get(zapName).isEmpty())
         {
-            ArrayList<Location> fileZap = readFile(Zap.ZAP_FILENAME);
+            ArrayList<AreaOfInterest> fileZap = readFile(Zap.ZAP_FILENAME);
             if (fileZap != null)
             {
-                locationMap.put(zapName, fileZap);
+                areaOfInterestMap.put(zapName, fileZap);
             }
         }
 
@@ -112,19 +110,19 @@ public class DataManager extends Thread
             {
             }
 
-            ArrayList<Location> listAttrait = updateAttrait();
-            ArrayList<Location> listParking = updateParking();
-            ArrayList<Location> listZap = updateZAP();
+            ArrayList<AreaOfInterest> listAttrait = updateAttrait();
+            ArrayList<AreaOfInterest> listParking = updateParking();
+            ArrayList<AreaOfInterest> listZap = updateZAP();
 
-            locationMap.put(attraitName, listAttrait);
-            locationMap.put(parkingName, listParking);
-            locationMap.put(zapName, listZap);
+            areaOfInterestMap.put(attraitName, listAttrait);
+            areaOfInterestMap.put(parkingName, listParking);
+            areaOfInterestMap.put(zapName, listZap);
         }
     }
 
-    public Map<String, ArrayList<Location>> getLocationValues(double locX, double locY, double radius)
+    public Map<String, ArrayList<AreaOfInterest>> getAreaOfInterestValues(double locX, double locY, double radius)
     {
-        return locationMap;
+        return areaOfInterestMap;
     }
 
     private String getDataString(String url)
@@ -144,7 +142,7 @@ public class DataManager extends Thread
         return fetcher.getDataString();
     }
 
-    private ArrayList<Location> readFile(String fileName)
+    private ArrayList<AreaOfInterest> readFile(String fileName)
     {
         Context context = OLookApp.getAppContext();
 
@@ -154,12 +152,12 @@ public class DataManager extends Thread
             return null;
         }
 
-        ArrayList<Location> newList;
+        ArrayList<AreaOfInterest> newList;
         try
         {
             InputStream fis = context.openFileInput(fileName);
             ObjectInputStream ois = new ObjectInputStream(fis);
-            newList = (ArrayList<Location>) ois.readObject();
+            newList = (ArrayList<AreaOfInterest>) ois.readObject();
             ois.close();
             fis.close();
             return newList;
@@ -182,7 +180,7 @@ public class DataManager extends Thread
         return null;
     }
 
-    private void writeFile(ArrayList<Location> listToWrite, String fileName)
+    private void writeFile(ArrayList<AreaOfInterest> listToWrite, String fileName)
     {
         Context context = OLookApp.getAppContext();
         try
@@ -200,30 +198,30 @@ public class DataManager extends Thread
         }
     }
 
-    private ArrayList<Location> updateAttrait()
+    private ArrayList<AreaOfInterest> updateAttrait()
     {
         String jsonData = getDataString(Attrait.URL_ATTRAIT);
-        ArrayList<Location> attraitData = Attrait.parseJSON(jsonData);
+        ArrayList<AreaOfInterest> attraitData = Attrait.parseJSON(jsonData);
 
         writeFile(attraitData, Attrait.ATTRAIT_FILENAME);
 
         return attraitData;
     }
 
-    private ArrayList<Location> updateParking()
+    private ArrayList<AreaOfInterest> updateParking()
     {
         String jsonData = getDataString(Parking.URL_PARKING);
-        ArrayList<Location> parkingData = Parking.parseJSON(jsonData);
+        ArrayList<AreaOfInterest> parkingData = Parking.parseJSON(jsonData);
 
         writeFile(parkingData, Parking.PARKING_FILENAME);
 
         return parkingData;
     }
 
-    private ArrayList<Location> updateZAP()
+    private ArrayList<AreaOfInterest> updateZAP()
     {
         String csvData = getDataString(Zap.URL_ZAP);
-        ArrayList<Location> zapData = Zap.parseCSV(csvData);
+        ArrayList<AreaOfInterest> zapData = Zap.parseCSV(csvData);
 
         writeFile(zapData, Zap.ZAP_FILENAME);
 
