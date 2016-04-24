@@ -36,6 +36,8 @@ public class DataManager extends Thread
     private String parkingName;
     private String zapName;
 
+    private boolean dataFetched;
+
     Map<String, ArrayList<AreaOfInterest>> areaOfInterestMap;
 
     /*
@@ -56,6 +58,8 @@ public class DataManager extends Thread
         areaOfInterestMap.put(attraitName, new ArrayList<AreaOfInterest>());
         areaOfInterestMap.put(parkingName, new ArrayList<AreaOfInterest>());
         areaOfInterestMap.put(zapName, new ArrayList<AreaOfInterest>());
+
+        dataFetched = false;
     }
 
     public static DataManager getInstance()
@@ -83,6 +87,11 @@ public class DataManager extends Thread
             {
                 areaOfInterestMap.put(attraitName, fileAttrait);
             }
+            else
+            {
+                ArrayList<AreaOfInterest> listAttrait = updateAttrait();
+                areaOfInterestMap.put(attraitName, listAttrait);
+            }
         }
 
         if (areaOfInterestMap.get(parkingName).isEmpty())
@@ -91,6 +100,11 @@ public class DataManager extends Thread
             if (fileParking != null)
             {
                 areaOfInterestMap.put(parkingName, fileParking);
+            }
+            else
+            {
+                ArrayList<AreaOfInterest> listParking = updateParking();
+                areaOfInterestMap.put(parkingName, listParking);
             }
         }
 
@@ -101,7 +115,14 @@ public class DataManager extends Thread
             {
                 areaOfInterestMap.put(zapName, fileZap);
             }
+            else
+            {
+                ArrayList<AreaOfInterest> listZap = updateZAP();
+                areaOfInterestMap.put(zapName, listZap);
+            }
         }
+
+        dataFetched = true;
 
         while(true)
         {
@@ -125,6 +146,14 @@ public class DataManager extends Thread
 
     public Map<String, ArrayList<AreaOfInterest>> getAreaOfInterestValues(double locX, double locY, double radius)
     {
+        while (!dataFetched)
+        {
+            try {
+                Thread.sleep(1000);
+            }
+            catch (InterruptedException e){}
+        }
+
         Map<String, ArrayList<AreaOfInterest>> sortedLocationMap = new HashMap<>();
 
         for(String key : areaOfInterestMap.keySet())

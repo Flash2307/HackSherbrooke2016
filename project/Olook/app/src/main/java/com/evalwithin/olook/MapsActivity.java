@@ -26,6 +26,8 @@ import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 
+import java.util.Map;
+
 public class MapsActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, OnMapReadyCallback, GPSListener, OrientationListener {
 
@@ -104,7 +106,7 @@ public class MapsActivity extends AppCompatActivity
 
         filters.changeActive(menuItem.getItemId());
 
-        DataManager.getInstance().getLocationValues(45.4010, -71.8824, 50d);
+        DataManager.getInstance().getAreaOfInterestValues(-71.8824, 45.4010, 50d);
 
         return false;
     }
