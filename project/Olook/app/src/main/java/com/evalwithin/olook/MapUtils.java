@@ -1,5 +1,6 @@
 package com.evalwithin.olook;
 
+import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -43,6 +44,7 @@ public class MapUtils {
         datasetIconIndexes.put(res.getString(R.string.filter_name_attrait), IconIndex.INTEREST);
         datasetIconIndexes.put(res.getString(R.string.filter_name_parking), IconIndex.PARKING);
         datasetIconIndexes.put(res.getString(R.string.filter_name_zap), IconIndex.WIFI);
+        datasetIconIndexes.put(res.getString(R.string.filter_name_parcometre), IconIndex.PARKMETER);
     }
 
     static void setMyLocation(GoogleMap map, LatLng coord) {
