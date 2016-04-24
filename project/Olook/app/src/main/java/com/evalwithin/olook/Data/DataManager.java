@@ -15,6 +15,7 @@ import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
+import java.util.Collection;
 
 /**
  * Created by Pascal on 23/04/2016.
@@ -64,19 +65,42 @@ public class DataManager extends Thread
         while(true)
         {
             //TODO: Verify if file exists --> Create/Update if not existing
+            if (locationsList.get(INDEX_ATTRAIT).isEmpty())
+            {
+                ArrayList<Location> fileAttrait = readFile(Attrait.ATTRAIT_FILENAME);
+                if (fileAttrait != null)
+                {
+                    locationsList.set(INDEX_ATTRAIT, fileAttrait);
+                }
+            }
+
+            if (locationsList.get(INDEX_PARKING).isEmpty())
+            {
+                ArrayList<Location> fileParking = readFile(Parking.PARKING_FILENAME);
+                if (fileParking != null)
+                {
+                    locationsList.set(INDEX_PARKING, fileParking);
+                }
+            }
+
             if (locationsList.get(INDEX_ZAP).isEmpty())
             {
                 ArrayList<Location> fileZap = readFile(Zap.ZAP_FILENAME);
-                if (fileZap != null) {
+                if (fileZap != null)
+                {
                     locationsList.set(INDEX_ZAP, fileZap);
                 }
             }
 
 
             //TODO: Verify last modified date of file --> Update if too old
+            ArrayList<Location> listAttrait = updateAttrait();
+            ArrayList<Location> listParking = updateParking();
             ArrayList<Location> listZap = updateZAP();
 
             //TODO: Update to ram
+            locationsList.set(INDEX_ATTRAIT, listAttrait);
+            locationsList.set(INDEX_PARKING, listParking);
             locationsList.set(INDEX_ZAP, listZap);
 
             try
@@ -160,6 +184,26 @@ public class DataManager extends Thread
             Log.e("IOException", e.toString());
             e.printStackTrace();
         }
+    }
+
+    private ArrayList<Location> updateAttrait()
+    {
+        String jsonData = getDataString(Attrait.URL_ATTRAIT);
+        ArrayList<Location> attraitData = Attrait.parseJSON(jsonData);
+
+        writeFile(attraitData, Attrait.ATTRAIT_FILENAME);
+
+        return attraitData;
+    }
+
+    private ArrayList<Location> updateParking()
+    {
+        String jsonData = getDataString(Parking.URL_PARKING);
+        ArrayList<Location> parkingData = Parking.parseJSON(jsonData);
+
+        writeFile(parkingData, Parking.PARKING_FILENAME);
+
+        return parkingData;
     }
 
     private ArrayList<Location> updateZAP()

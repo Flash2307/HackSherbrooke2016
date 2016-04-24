@@ -13,7 +13,7 @@ import java.util.ArrayList;
  */
 public class Attrait extends Location
 {
-
+    public final static String ATTRAIT_FILENAME = "AttraitData.dat";
     public final static String URL_ATTRAIT = "http://api.destinationsherbrooke.com/json/attraits?SecureKey=SmSE4gaX77120Cj6wlSGwE2t1Sk1om9z2H1X1teBx3rpmddancW51frlB91YNuF9";
 
     private String siteWeb;
@@ -34,8 +34,8 @@ public class Attrait extends Location
         return phoneNumber;
     }
 
-    public static ArrayList<Attrait> parseJSON(String jsonString) {
-        ArrayList<Attrait> listAttrait = new ArrayList<>();
+    public static ArrayList<Location> parseJSON(String jsonString) {
+        ArrayList<Location> listAttrait = new ArrayList<>();
         try
         {
             JSONObject jObj = new JSONObject(jsonString);
