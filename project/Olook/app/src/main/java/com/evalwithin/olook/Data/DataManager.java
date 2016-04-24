@@ -33,10 +33,6 @@ public class DataManager extends Thread
 
     private final long WAIT_TIME = 300000; //7200000;
 
-    private String attraitName;
-    private String parkingName;
-    private String zapName;
-    private String parcometreName;
     private String[] filterNames;
 
     private boolean dataFetched;
@@ -142,6 +138,11 @@ public class DataManager extends Thread
                     url = Parcometre.URL_PARCOMETRE;
                     className = Parcometre.class.getName();
                     break;
+                case 4:
+                    fileName = Restaurant.RESTO_FILENAME;
+                    url = Restaurant.URL_RESTO;
+                    className = Restaurant.class.getName();
+                    break;
             }
 
             if (areaOfInterestMap.get(filterName).isEmpty())
@@ -159,62 +160,6 @@ public class DataManager extends Thread
                 }
             }
         }
-
-        /*if (areaOfInterestMap.get(attraitName).isEmpty())
-        {
-            ArrayList<AreaOfInterest> fileAttrait = readFile(Attrait.ATTRAIT_FILENAME);
-            if (fileAttrait != null)
-            {
-                areaOfInterestMap.put(attraitName, fileAttrait);
-            }
-            else
-            {
-                ArrayList<AreaOfInterest> listAttrait = updateAttrait();
-                areaOfInterestMap.put(attraitName, listAttrait);
-            }
-        }
-
-        if (areaOfInterestMap.get(parkingName).isEmpty())
-        {
-            ArrayList<AreaOfInterest> fileParking = readFile(Parking.PARKING_FILENAME);
-            if (fileParking != null)
-            {
-                areaOfInterestMap.put(parkingName, fileParking);
-            }
-            else
-            {
-                ArrayList<AreaOfInterest> listParking = updateParking();
-                areaOfInterestMap.put(parkingName, listParking);
-            }
-        }
-
-        if (areaOfInterestMap.get(zapName).isEmpty())
-        {
-            ArrayList<AreaOfInterest> fileZap = readFile(Zap.ZAP_FILENAME);
-            if (fileZap != null)
-            {
-                areaOfInterestMap.put(zapName, fileZap);
-            }
-            else
-            {
-                ArrayList<AreaOfInterest> listZap = updateZAP();
-                areaOfInterestMap.put(zapName, listZap);
-            }
-        }
-
-        if (areaOfInterestMap.get(parcometreName).isEmpty())
-        {
-            ArrayList<AreaOfInterest>  fileParcometre = readFile(Parcometre.PARCOMETRE_FILENAME);
-            if (fileParcometre != null)
-            {
-                areaOfInterestMap.put(parcometreName, fileParcometre);
-            }
-            else
-            {
-                ArrayList<AreaOfInterest> listParcometre = updateParcometre();
-                areaOfInterestMap.put(parcometreName, listParcometre);
-            }
-        }*/
     }
 
     public Map<String, ArrayList<AreaOfInterest>> getAreaOfInterestValues(double locX, double locY, double radius)
@@ -374,47 +319,6 @@ public class DataManager extends Thread
 
         return null;
     }
-/*
-    private ArrayList<AreaOfInterest> updateAttrait()
-    {
-        String jsonData = getDataString(Attrait.URL_ATTRAIT);
-        ArrayList<AreaOfInterest> attraitData = Attrait.parseJSON(jsonData);
-
-        writeFile(attraitData, Attrait.ATTRAIT_FILENAME);
-
-        return attraitData;
-    }
-
-    private ArrayList<AreaOfInterest> updateParking()
-    {
-        String jsonData = getDataString(Parking.URL_PARKING);
-        ArrayList<AreaOfInterest> parkingData = Parking.parseJSON(jsonData);
-
-        writeFile(parkingData, Parking.PARKING_FILENAME);
-
-        return parkingData;
-    }
-
-    private ArrayList<AreaOfInterest> updateZAP()
-    {
-        String csvData = getDataString(Zap.URL_ZAP);
-        ArrayList<AreaOfInterest> zapData = Zap.parseCSV(csvData);
-
-        writeFile(zapData, Zap.ZAP_FILENAME);
-
-        return zapData;
-    }
-
-    private ArrayList<AreaOfInterest> updateParcometre()
-    {
-        String jsonData = getDataString(Parcometre.URL_PARCOMETRE);
-        ArrayList<AreaOfInterest> parcometreData = Parcometre.parseJSON(jsonData);
-
-        writeFile(parcometreData, Parcometre.PARCOMETRE_FILENAME);
-
-        return  parcometreData;
-    }
-*/
 }
 
 
