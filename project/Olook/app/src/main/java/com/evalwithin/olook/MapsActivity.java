@@ -181,6 +181,9 @@ public class MapsActivity extends AppCompatActivity
         mMap.getUiSettings().setCompassEnabled(false);
         mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
             public boolean onMarkerClick(Marker marker) {
+                if(marker.equals(MapUtils.userMarker))
+                    return false;
+
                 if (mLastOpenned != null) {
                     mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
                     if (mLastOpenned.equals(marker)) {

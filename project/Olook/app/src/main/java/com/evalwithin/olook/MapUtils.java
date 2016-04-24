@@ -1,9 +1,7 @@
 package com.evalwithin.olook;
 
 import android.content.res.Resources;
-import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.drawable.Icon;
 import android.location.Location;
 
 import com.google.android.gms.maps.GoogleMap;
@@ -13,7 +11,6 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 
 public class MapUtils {
@@ -29,7 +26,7 @@ public class MapUtils {
     //static final int ICON_MY_LOCATION = R.drawable.user;
     //static final int ICON_INTEREST_AREA = R.drawable.wifi;
     //static BitmapDescriptor mIconMyLocation, mIconInterestArea;
-    static Marker marker;
+    static Marker userMarker;
 
 
     static void init(Resources res) {
@@ -67,12 +64,12 @@ public class MapUtils {
     }
 
     static void setMyLocation(GoogleMap map, LatLng coord) {
-        if(marker != null)
-            marker.remove();
+        if(userMarker != null)
+            userMarker.remove();
         
         MarkerOptions markerOptions = new MarkerOptions().position(coord).title("");
         markerOptions.icon(iconImages[IconIndex.USER.value]);
-        marker = map.addMarker(markerOptions);
+        userMarker = map.addMarker(markerOptions);
     }
 
     static Marker addInterestPoint(GoogleMap map, LatLng coord, IconIndex icon, String title, String description) {
