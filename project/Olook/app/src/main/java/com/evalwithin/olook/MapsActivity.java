@@ -16,6 +16,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.Html;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -190,8 +191,8 @@ public class MapsActivity extends AppCompatActivity
                 }
 
                 mLastOpenned = marker;
-                mTitle.setText(marker.getTitle());
-                mDescription.setText(marker.getSnippet());
+                mTitle.setText(Html.fromHtml(marker.getTitle()));
+                mDescription.setText(Html.fromHtml(marker.getSnippet()));
                 mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
 
                 return true;
