@@ -17,9 +17,9 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.UiSettings;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 
 public class MapsActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, OnMapReadyCallback, GPSListener, OrientationListener {
@@ -31,6 +31,7 @@ public class MapsActivity extends AppCompatActivity
     private static String TAG = MapsActivity.class.getSimpleName();
 
     private GoogleMap mMap;
+    private Marker mLastOpenned = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -103,6 +104,25 @@ public class MapsActivity extends AppCompatActivity
         mMap = googleMap;
         mMap.getUiSettings().setScrollGesturesEnabled(false);
         mMap.getUiSettings().setRotateGesturesEnabled(false);
+        mMap.getUiSettings().setCompassEnabled(false);
+        mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+            public boolean onMarkerClick(Marker marker) {
+                if (mLastOpenned != null) {
+
+                    mLastOpenned.hideInfoWindow();
+
+                    if (mLastOpenned.equals(marker)) {
+                        mLastOpenned = null;
+                        return true;
+                    }
+                }
+
+                marker.showInfoWindow();
+                mLastOpenned = marker;
+
+                return true;
+            }
+        });
 
         //mMap.getUiSettings().setScrollGesturesEnabled(false);
         //mMap.getUiSettings().setCompassEnabled(false);
