@@ -204,6 +204,8 @@ public class MapsActivity extends AppCompatActivity
         CameraPosition oldPos = googleMap.getCameraPosition();
         CameraPosition pos = CameraPosition.builder(oldPos).bearing(245.0F).build();
         googleMap.moveCamera(CameraUpdateFactory.newCameraPosition(pos));
+
+        fillMarkers();
     }
 
     @Override
@@ -270,7 +272,7 @@ public class MapsActivity extends AppCompatActivity
         for (String key: keys) {
             MapUtils.IconIndex idx = MapUtils.getIconIndex(key);
             for (AreaOfInterest area : data.get(key)) {
-                MapUtils.addInterestPoint(mMap, new LatLng(area.getLocX(), area.getLocY()), idx, area.getLocationName());
+                MapUtils.addInterestPoint(mMap, new LatLng(area.getLocY(), area.getLocX()), idx, area.getLocationName());
             }
         }
     }
