@@ -17,6 +17,9 @@ public class Compass extends View {
     private boolean firstDraw;
     private RectF dstNeedle = new RectF();
 
+    private float angles[] = new float[5];
+    private int index;
+
     public Compass(Context context) {
         super(context);
         init();
@@ -63,10 +66,21 @@ public class Compass extends View {
         dstNeedle.set(cxCompass-10, (int)(cyCompass - radiusCompass), cxCompass+10, cyCompass);
 
         if(!firstDraw){
+
+            angles[index] = (float)(Math.toDegrees(direction) + 360) % 360;
+            index++;
+            if(index >= 5)
+                index = 0;
+
+            float angle = 0;
+            for (int i =0; i < 5; i++)
+                angle += angles[i];
+            angle /= 5;
+
             paint.setColor(Color.RED);
 
             canvas.save();
-            canvas.rotate((float)(direction * 180/3.14), cxCompass, cyCompass);
+            canvas.rotate(-angle, cxCompass, cyCompass);
             canvas.drawOval(dstNeedle, paint);
             canvas.restore();
 

@@ -1,6 +1,7 @@
 package com.evalwithin.olook;
 
 import android.content.Intent;
+import android.hardware.Camera;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
@@ -17,7 +18,10 @@ import com.evalwithin.olook.Data.AreaOfInterest;
 import com.evalwithin.olook.Data.DataManager;
 import com.google.android.gms.maps.model.LatLng;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Map;
 import java.util.Set;
 
@@ -34,14 +38,13 @@ public class CameraActivity extends AppCompatActivity implements NavigationView.
 
     private CameraPreview mPreview;
     private RelativeLayout mLayout;
+    private CameraOverlay mOverlay;
 
     private GPSTracker gpsTracker;
     private boolean hasLocation = false;
 
     private OrientationTracker orientationTracker;
     Map<String, ArrayList<AreaOfInterest>> localData;
-
-    TextView txAxisX, txAxisY, txAxisZ;
 
     final int ORIENTATION_SAMPLE_SIZE = 50;
     private float[] sampleOrientationX = new float[ORIENTATION_SAMPLE_SIZE];
@@ -53,6 +56,9 @@ public class CameraActivity extends AppCompatActivity implements NavigationView.
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_camera);
         mLayout = (RelativeLayout) findViewById(R.id.cameraLayout);
+
+        mOverlay = new CameraOverlay(getApplicationContext());
+        mLayout.addView(mOverlay);
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
@@ -71,10 +77,6 @@ public class CameraActivity extends AppCompatActivity implements NavigationView.
 
         orientationTracker = new OrientationTracker(getApplicationContext());
         orientationTracker.addListener(this);
-
-        txAxisX = (TextView) findViewById(R.id.axisX);
-        txAxisY = (TextView) findViewById(R.id.axisY);
-        txAxisZ = (TextView) findViewById(R.id.axisZ);
     }
 
     @Override
@@ -176,6 +178,8 @@ public class CameraActivity extends AppCompatActivity implements NavigationView.
                 if (Math.abs(avgY) > MIN_Y_ANGLE) {
                     searchNearestDirection(avgX);
                 }
+            } else {
+                mOverlay.hideDetection();
             }
 
             sampleOrientationCount = 0;
@@ -189,11 +193,11 @@ public class CameraActivity extends AppCompatActivity implements NavigationView.
 
     private void searchNearestDirection(double azimut) {
         // search nearest at direction
-        Location myLoc = gpsTracker.getLocation();
+        final Location myLoc = gpsTracker.getLocation();
         ArrayList<AreaOfInterest> potentialAreas = new ArrayList<AreaOfInterest>();
 
         Set<String> keys = localData.keySet();
-        for (String key: keys) {
+        for (String key : keys) {
             MapUtils.IconIndex idx = MapUtils.getIconIndex(key);
             for (AreaOfInterest area : localData.get(key)) {
                 if (isAreaInAzimut(area, myLoc, azimut)) {
@@ -202,6 +206,37 @@ public class CameraActivity extends AppCompatActivity implements NavigationView.
             }
         }
 
+        if (potentialAreas.size() > 0) {
+            Collections.sort(potentialAreas, new Comparator<AreaOfInterest>() {
+                @Override
+                public int compare(AreaOfInterest area1, AreaOfInterest area2) {
+                    Location locArea1 = new Location("Area 1");
+                    locArea1.setLongitude(area1.getLocX());
+                    locArea1.setLatitude(area1.getLocY());
+
+                    Location locArea2 = new Location("Area 2");
+                    locArea2.setLongitude(area2.getLocX());
+                    locArea2.setLatitude(area2.getLocY());
+
+                    return myLoc.distanceTo(locArea1) < myLoc.distanceTo(locArea2) ? -1 : 1;
+                }
+            });
+
+            ArrayList<AreaOfInterest> areas = new ArrayList<AreaOfInterest>();
+            int nAreas = 3;
+
+            int n = nAreas;
+            if (potentialAreas.size() < nAreas) {
+                n = potentialAreas.size();
+            }
+            for (int i = 0; i < n; i++) {
+                areas.add(potentialAreas.get(i));
+            }
+
+            mOverlay.showDetection(areas, myLoc);
+        }
+
+        /*
         if (potentialAreas.size() > 0) {
             Location firstArea = new Location("First");
             firstArea.setLongitude(potentialAreas.get(0).getLocX());
@@ -220,9 +255,7 @@ public class CameraActivity extends AppCompatActivity implements NavigationView.
                     minDistanceArea = area;
                 }
             }
-
-            txAxisX.setText(minDistanceArea.getLocationName());
-        }
+            */
     }
 
     private boolean isAreaInAzimut(AreaOfInterest area, Location myLocation, double azimut) {
