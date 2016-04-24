@@ -25,6 +25,7 @@ public class LocationEvent extends AreaOfInterest
 
     private String siteWeb;
     private String phoneNumber;
+    private String lieu;
 
     public LocationEvent(double locX, double locY, String locName, String lieu, String siteWeb, String phoneNumber)
     {
@@ -32,6 +33,7 @@ public class LocationEvent extends AreaOfInterest
 
         this.phoneNumber = phoneNumber;
         this.siteWeb = siteWeb;
+        this.lieu = "";
 
         String address = "";
         if (lieu.toLowerCase().contains("|"))
@@ -47,6 +49,7 @@ public class LocationEvent extends AreaOfInterest
             if (!address.toLowerCase().contains("sherbrooke")) {
                 address += ", Sherbrooke";
             }
+            this.lieu = address;
 
             Geocoder geocoder = new Geocoder(OLookApp.getAppContext());
             try {
