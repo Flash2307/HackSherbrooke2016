@@ -127,7 +127,7 @@ public class MapsActivity extends AppCompatActivity
         centerMap(loc, 15);
 
         MapUtils.setMyLocation(m_map, ll);
-        MapUtils.addInterestPoint(googleMap, new LatLng(-30, 140), "Nice area!");
+        MapUtils.addInterestPoint(googleMap, new LatLng(45.410600, -71.887200), MapUtils.IconIndex.WIFI, "Nice area!");
 
         googleMap.setOnCameraChangeListener(new GoogleMap.OnCameraChangeListener() {
             private float lastZoom = 1;
@@ -223,5 +223,9 @@ public class MapsActivity extends AppCompatActivity
 
         LatLng myLatLng = new LatLng(location.getLatitude(), location.getLongitude());
         m_map.moveCamera(CameraUpdateFactory.newLatLngZoom(myLatLng, zoom));
+    }
+
+    private void fillMarkers(){
+
     }
 }
