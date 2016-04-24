@@ -59,9 +59,11 @@ public class OrientationTracker implements SensorEventListener {
                 try {
                     SensorManager.getOrientation(R, orientation);
                     float azimut = orientation[0]; // orientation contains: azimut, pitch and roll
+                    float pitch = orientation[1];
+                    float roll = orientation[2];
 
                     for (OrientationListener listener : listeners) {
-                        listener.onOrientationChanged(azimut);//orientationX);
+                        listener.onOrientationChanged(azimut, pitch, roll);
                     }
                 } catch (Exception ex) {
                     ex.printStackTrace();
