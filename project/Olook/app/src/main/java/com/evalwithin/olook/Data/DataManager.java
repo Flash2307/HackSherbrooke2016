@@ -144,6 +144,10 @@ public class DataManager extends Thread
                     url = Restaurant.URL_RESTO;
                     className = Restaurant.class.getName();
                     break;
+                case 5:
+                    fileName = LocationEvent.EVENT_FILENAME;
+                    url = LocationEvent.URL_EVENT;
+                    className = LocationEvent.class.getName();
             }
 
             if (areaOfInterestMap.get(filterName).isEmpty() && !fileName.isEmpty())
