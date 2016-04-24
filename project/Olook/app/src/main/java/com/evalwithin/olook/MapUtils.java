@@ -4,6 +4,7 @@ import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.Icon;
+import android.location.Location;
 
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.BitmapDescriptor;
@@ -47,6 +48,10 @@ public class MapUtils {
         {
             datasetIconIndexes.put(filterNames[i], IconIndex.values()[i+1]);
         }
+    }
+
+    public static double getDistance(Location pos1, Location pos2) {
+        return getDistance(pos1.getLongitude(), pos2.getLongitude(), pos1.getLatitude(), pos2.getLatitude());
     }
 
     public static double getDistance(double long1, double long2, double lat1, double lat2)
