@@ -81,6 +81,10 @@ public class LocationEvent extends AreaOfInterest
                 String siteWeb = obj.optString("SiteWeb", "");
                 String phoneNbr = obj.optString("NumeroTelephone", "");
 
+                String subTitle = obj.optString("SousTitre", "");
+                if (!subTitle.isEmpty())
+                    name += " - " + subTitle;
+
                 listAttrait.add(new LocationEvent(locX, locY, name, lieu, siteWeb, phoneNbr));
             }
             return listAttrait;
