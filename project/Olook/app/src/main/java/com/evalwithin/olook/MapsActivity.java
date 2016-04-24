@@ -63,8 +63,9 @@ public class MapsActivity extends AppCompatActivity
         MapUtils.init(getResources());
 
         filters = new FilterItems();
-        filters.addFilter("Test 1");
-        filters.addFilter("Beauté");
+        filters.addFilter(getResources().getString(R.string.filter_name_attrait));
+        filters.addFilter(getResources().getString(R.string.filter_name_parking));
+        filters.addFilter(getResources().getString(R.string.filter_name_zap));
 
         DataManager dataManager = DataManager.getInstance();
         dataManager.start();
@@ -101,6 +102,8 @@ public class MapsActivity extends AppCompatActivity
         menuItem.setChecked(!menuItem.isChecked());
 
         filters.changeActive(menuItem.getItemId());
+
+        DataManager.getInstance().getLocationValues(45.4010, -71.8824, 50d);
 
         return false;
     }

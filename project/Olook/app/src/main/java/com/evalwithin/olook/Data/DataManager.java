@@ -3,6 +3,7 @@ package com.evalwithin.olook.Data;
 
 import android.content.Context;
 import android.os.Process;
+import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.evalwithin.olook.FilterItems;
@@ -17,8 +18,10 @@ import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Created by Pascal on 23/04/2016.
@@ -124,7 +127,35 @@ public class DataManager extends Thread
 
     public Map<String, ArrayList<Location>> getLocationValues(double locX, double locY, double radius)
     {
-        return locationMap;
+        Map<String, ArrayList<Location>> sortedLocationMap = new HashMap<>();
+
+        for(String key : locationMap.keySet())
+        {
+            ArrayList<Location> locations = locationMap.get(key);
+            ArrayList<Location> sortedLocations = new ArrayList<>();
+
+            for(Location location : locations)
+            {
+                if(radius >= distance(location.getLocX(), locX, location.getLocY(), locY))
+                {
+                    sortedLocations.add(location);
+                }
+            }
+
+            if(sortedLocations.size() > 0)
+            {
+                sortedLocationMap.put(key, sortedLocations);
+            }
+        }
+
+        return sortedLocationMap;
+    }
+
+    private double distance(double x1, double x2, double y1, double y2)
+    {
+        double deltaX = x1 - x2;
+        double deltaY = y1 - y2;
+        return Math.sqrt(deltaX * deltaX + deltaY * deltaY);
     }
 
     private String getDataString(String url)
