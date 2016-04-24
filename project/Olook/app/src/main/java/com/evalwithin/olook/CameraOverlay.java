@@ -36,12 +36,7 @@ public class CameraOverlay extends View {
             for (AreaOfInterest area : areas) {
                 Bitmap wifi = BitmapFactory.decodeResource(getResources(), R.drawable.wifi);
                 double angle = getAreaAngle(area, myLocation);
-
-                int areaX = (int)((float)w/2 + (float)angle/3.14*w/2);
-                String descr = area.getLocationName();
                 canvas.drawBitmap(wifi, (int)((float)w/2 + (float)angle/3.14*w/2), h/2, p);
-                p.setTextSize(25);
-                canvas.drawText(descr, areaX - 100, h/2 + 150, p);
             }
         }
     }
