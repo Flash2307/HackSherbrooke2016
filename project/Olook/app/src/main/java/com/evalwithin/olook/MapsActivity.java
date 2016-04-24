@@ -44,6 +44,8 @@ public class MapsActivity extends AppCompatActivity
     private Marker mLastOpenned = null;
     private Compass mCompass;
 
+    Location lastDatapoint = null;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -205,8 +207,6 @@ public class MapsActivity extends AppCompatActivity
         CameraPosition oldPos = googleMap.getCameraPosition();
         CameraPosition pos = CameraPosition.builder(oldPos).bearing(245.0F).build();
         googleMap.moveCamera(CameraUpdateFactory.newCameraPosition(pos));
-
-        fillMarkers();
     }
 
     @Override
@@ -242,6 +242,11 @@ public class MapsActivity extends AppCompatActivity
 
     @Override
     public void onGPSLocationChanged(Location newLocation) {
+        if(lastDatapoint == null) {
+            fillMarkers();
+            lastDatapoint = newLocation;
+        }
+
         centerMap(newLocation);
         LatLng ll = new LatLng(newLocation.getLatitude(), newLocation.getLongitude());
         MapUtils.setMyLocation(mMap, ll);
