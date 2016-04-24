@@ -180,6 +180,8 @@ public class MapsActivity extends AppCompatActivity
         mMap.getUiSettings().setScrollGesturesEnabled(false);
         mMap.getUiSettings().setRotateGesturesEnabled(false);
         mMap.getUiSettings().setCompassEnabled(false);
+        mMap.getUiSettings().setMapToolbarEnabled(false);
+
         mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
             public boolean onMarkerClick(Marker marker) {
                 if(marker.equals(MapUtils.userMarker))
@@ -235,7 +237,7 @@ public class MapsActivity extends AppCompatActivity
             @Override
             public void onCameraChange(CameraPosition pos) {
                 float maxLevel = 18f;
-                float minLevel = 15f;
+                float minLevel = 13f;
 
                 if (pos.zoom > maxLevel) {
                     // TODO : Mettre le mode camera
@@ -340,7 +342,7 @@ public class MapsActivity extends AppCompatActivity
 
     private void fillMarkers(){
         Location loc = gpsTracker.getLocation();
-        double radius = 2500;
+        double radius = 3500;
         Map<String, ArrayList<AreaOfInterest>> data = DataManager.getInstance().getAreaOfInterestValues(loc.getLongitude(), loc.getLatitude(), radius);
 
         Set<String> keys = data.keySet();
@@ -355,5 +357,10 @@ public class MapsActivity extends AppCompatActivity
             markerMap.put(key, markerList);
         }
 
+    }
+
+    public void closeInformationsBar(View view){
+        mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+        mLastOpenned = null;
     }
 }
