@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -96,6 +97,7 @@ public class DataManager extends Thread
             {
             }
 
+            /*
             ArrayList<AreaOfInterest> listAttrait = updateAttrait();
             ArrayList<AreaOfInterest> listParking = updateParking();
             ArrayList<AreaOfInterest> listZap = updateZAP();
@@ -105,6 +107,7 @@ public class DataManager extends Thread
             areaOfInterestMap.put(parkingName, listParking);
             areaOfInterestMap.put(zapName, listZap);
             areaOfInterestMap.put(parcometreName, listParcometre);
+            */
         }
     }
 
@@ -122,29 +125,27 @@ public class DataManager extends Thread
                 case 0:
                     fileName = Attrait.ATTRAIT_FILENAME;
                     url = Attrait.URL_ATTRAIT;
-                    className = Attrait.class.toString();
+                    className = Attrait.class.getName();
                     break;
                 case 1:
                     fileName = Parking.PARKING_FILENAME;
                     url = Parking.URL_PARKING;
-                    className = Parking.class.toString();
+                    className = Parking.class.getName();
                     break;
                 case 2:
                     fileName = Zap.ZAP_FILENAME;
                     url = Zap.URL_ZAP;
-                    className = Zap.class.toString();
+                    className = Zap.class.getName();
                     break;
                 case 3:
                     fileName = Parcometre.PARCOMETRE_FILENAME;
                     url = Parcometre.URL_PARCOMETRE;
-                    className = Parcometre.class.toString();
+                    className = Parcometre.class.getName();
                     break;
             }
 
             if (areaOfInterestMap.get(filterName).isEmpty())
             {
-
-
                 ArrayList<AreaOfInterest> file = readFile(fileName);
                 if (file != null)
                 {
@@ -153,7 +154,7 @@ public class DataManager extends Thread
                 else
                 {
 
-                    ArrayList<AreaOfInterest> list = updateData(url, fileName, className);
+                    ArrayList<AreaOfInterest> list = updateData(fileName, url, className);
                     areaOfInterestMap.put(filterName, list);
                 }
             }
@@ -349,14 +350,31 @@ public class DataManager extends Thread
             writeFile(data, filename);
 
             return data;
-        } catch(Exception e)
+        }
+        catch (ClassNotFoundException e)
         {
-
+            Log.e("ClassNotFoundException", e.toString());
+            e.printStackTrace();
+        }
+        catch (NoSuchMethodException e)
+        {
+            Log.e("NoSuchMethodException", e.toString());
+            e.printStackTrace();
+        }
+        catch (InvocationTargetException e)
+        {
+            Log.e("InvocationTargetEx", e.toString());
+            e.printStackTrace();
+        }
+        catch (IllegalAccessException e)
+        {
+            Log.e("IllegalAccessException", e.toString());
+            e.printStackTrace();
         }
 
         return null;
     }
-
+/*
     private ArrayList<AreaOfInterest> updateAttrait()
     {
         String jsonData = getDataString(Attrait.URL_ATTRAIT);
@@ -396,6 +414,7 @@ public class DataManager extends Thread
 
         return  parcometreData;
     }
+*/
 }
 
 
