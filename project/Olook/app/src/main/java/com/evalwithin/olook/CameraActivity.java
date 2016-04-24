@@ -26,6 +26,12 @@ import java.util.Set;
  */
 public class CameraActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener,
     GPSListener, OrientationListener {
+    final double ERROR_MULTIPLICATOR = 10;
+    final double MAX_CUMULATIVE_ERROR_FOR_DETECTION = 18;
+    final double MIN_Y_ANGLE = 0.5;
+    final double CAMERA_DETECTION_RANGE = 500;
+    final double AZIMUT_DETECTION_DELTA = 0.3;
+
     private CameraPreview mPreview;
     private RelativeLayout mLayout;
 
@@ -120,7 +126,7 @@ public class CameraActivity extends AppCompatActivity implements NavigationView.
     @Override
     public void onGPSLocationChanged(Location newLocation) {
         Location loc = gpsTracker.getLocation();
-        double radius = 500;
+        double radius = CAMERA_DETECTION_RANGE;
         localData = DataManager.getInstance().getAreaOfInterestValues(loc.getLongitude(), loc.getLatitude(), radius);
         hasLocation = true;
     }
@@ -156,9 +162,9 @@ public class CameraActivity extends AppCompatActivity implements NavigationView.
                 avgY += sampleOrientationY[i];
                 avgZ += sampleOrientationZ[i];
 
-                errorX += 10*Math.abs(sampleOrientationX[i + 1] - sampleOrientationX[i]);
-                errorY += 10*Math.abs(sampleOrientationY[i + 1] - sampleOrientationY[i]);
-                errorZ += 10*Math.abs(sampleOrientationZ[i + 1] - sampleOrientationZ[i]);
+                errorX += ERROR_MULTIPLICATOR * Math.abs(sampleOrientationX[i + 1] - sampleOrientationX[i]);
+                errorY += ERROR_MULTIPLICATOR * Math.abs(sampleOrientationY[i + 1] - sampleOrientationY[i]);
+                errorZ += ERROR_MULTIPLICATOR * Math.abs(sampleOrientationZ[i + 1] - sampleOrientationZ[i]);
             }
 
             avgX /= ORIENTATION_SAMPLE_SIZE;
@@ -166,8 +172,8 @@ public class CameraActivity extends AppCompatActivity implements NavigationView.
             avgZ /= ORIENTATION_SAMPLE_SIZE;
 
             double cumulativeError = errorX + errorY + errorY;
-            if (cumulativeError < 18) {
-                if (Math.abs(avgY) > 0.5) {
+            if (cumulativeError < MAX_CUMULATIVE_ERROR_FOR_DETECTION) {
+                if (Math.abs(avgY) > MIN_Y_ANGLE) {
                     searchNearestDirection(avgX);
                 }
             }
@@ -220,11 +226,10 @@ public class CameraActivity extends AppCompatActivity implements NavigationView.
     }
 
     private boolean isAreaInAzimut(AreaOfInterest area, Location myLocation, double azimut) {
-        final double DELTA = 0.3F;
-
         double distY = area.getLocY() - myLocation.getLatitude();
         double distX = area.getLocX() - myLocation.getLongitude();
         double angleArea = Math.atan2(distY, distX);
-        return angleArea >= (azimut - DELTA) && angleArea <= (azimut + DELTA);
+
+        return angleArea >= (azimut - AZIMUT_DETECTION_DELTA) && angleArea <= (azimut + AZIMUT_DETECTION_DELTA);
     }
 }
