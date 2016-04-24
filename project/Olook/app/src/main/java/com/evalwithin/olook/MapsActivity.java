@@ -98,8 +98,6 @@ public class MapsActivity extends AppCompatActivity
         markerMap = new HashMap<>();
     }
 
-
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         if(menu.size() == 0)
@@ -123,6 +121,9 @@ public class MapsActivity extends AppCompatActivity
         {
             String key = item.getName();
             ArrayList<Marker> curMarker = markerMap.get(key);
+
+            if(curMarker == null)
+                continue;
 
             for (Marker marker : curMarker)
             {
@@ -156,8 +157,6 @@ public class MapsActivity extends AppCompatActivity
 
                     mLastOpenned.hideInfoWindow();
 
-
-
                     if (mLastOpenned.equals(marker)) {
                         mLastOpenned = null;
                         return true;
@@ -180,7 +179,7 @@ public class MapsActivity extends AppCompatActivity
         centerMap(loc, 15);
 
         MapUtils.setMyLocation(mMap, ll);
-        MapUtils.addInterestPoint(googleMap, new LatLng(45.410600, -71.887200), MapUtils.IconIndex.WIFI, "Nice area!");
+        //MapUtils.addInterestPoint(googleMap, new LatLng(45.410600, -71.887200), MapUtils.IconIndex.WIFI, "Nice area!");
 
         googleMap.setOnCameraChangeListener(new GoogleMap.OnCameraChangeListener() {
             private float lastZoom = 1;
@@ -258,7 +257,8 @@ public class MapsActivity extends AppCompatActivity
 
     @Override
     public void onGPSLocationChanged(Location newLocation) {
-        if(lastDatapoint == null) {
+        if(lastDatapoint == null || MapUtils.getDistance(lastDatapoint, newLocation) > 250) {
+            clearMarkers();
             fillMarkers();
             lastDatapoint = newLocation;
         }
@@ -282,6 +282,16 @@ public class MapsActivity extends AppCompatActivity
 
         LatLng myLatLng = new LatLng(location.getLatitude(), location.getLongitude());
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(myLatLng, zoom));
+    }
+
+    private void clearMarkers(){
+        Set<String> keys = markerMap.keySet();
+
+        for (String key: keys)
+            for (Marker marker : markerMap.get(key))
+                marker.remove();
+
+        markerMap.clear();
     }
 
     private void fillMarkers(){
