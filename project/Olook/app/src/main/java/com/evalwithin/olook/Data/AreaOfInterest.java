@@ -16,7 +16,7 @@ public class AreaOfInterest implements Serializable {
     {
         this.locX = locX;
         this.locY = locY;
-        this.locationDesc = locationDesc;
+        this.locationName = locationName;
         this.locationDesc = locationDesc;
     }
 
