@@ -100,9 +100,9 @@ public class MapsActivity extends AppCompatActivity
     @Override
     public void onMapReady(final GoogleMap googleMap) {
 
-        m_map = googleMap;
-        m_map.getUiSettings().setScrollGesturesEnabled(false);
-        m_map.getUiSettings().setRotateGesturesEnabled(false);
+        mMap = googleMap;
+        mMap.getUiSettings().setScrollGesturesEnabled(false);
+        mMap.getUiSettings().setRotateGesturesEnabled(false);
 
         //mMap.getUiSettings().setScrollGesturesEnabled(false);
         //mMap.getUiSettings().setCompassEnabled(false);
@@ -192,7 +192,7 @@ public class MapsActivity extends AppCompatActivity
     public void onGPSLocationChanged(Location newLocation) {
         centerMap(newLocation);
         LatLng ll = new LatLng(newLocation.getLatitude(), newLocation.getLongitude());
-        MapUtils.setMyLocation(m_map, ll);
+        MapUtils.setMyLocation(mMap, ll);
     }
 
     private void centerMap(Location location) {
