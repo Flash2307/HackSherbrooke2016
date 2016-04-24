@@ -34,10 +34,10 @@ import com.google.android.gms.maps.model.LatLng;
 public class MapsActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, OnMapReadyCallback, GPSListener, OrientationListener {
 
-
     private GPSTracker gpsTracker;
     private OrientationTracker orientationTracker;
     private PopupMenu popupMenu;
+    private FilterItems filters;
 
     private static String TAG = MapsActivity.class.getSimpleName();
 
@@ -74,19 +74,22 @@ public class MapsActivity extends AppCompatActivity
         new DataFetcher().execute(Zap.URL_ZAP, Zap.class.toString());
         MapUtils.init(getResources());
 
+        filters = new FilterItems();
+        filters.addFilter("Test 1");
+        filters.addFilter("Beauté");
+
         gpsTracker = new GPSTracker(getApplicationContext());
         orientationTracker = new OrientationTracker(getApplicationContext());
         orientationTracker.addListener(this);
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-
+    public boolean onCreateOptionsMenu(Menu menu)
+    {
         if(menu.size() == 0)
         {
-            for(int i = 0; i < 5; i++)
-            {
-                menu.add(0, i, Menu.NONE, "item " + i).setCheckable(true);
+            for (FilterItems.FilterItem filterItem : filters.getFilterItems()) {
+                menu.add(0, filterItem.getId(), Menu.NONE, filterItem.getName()).setCheckable(true);
             }
         }
 
@@ -99,6 +102,9 @@ public class MapsActivity extends AppCompatActivity
     public boolean onOptionsItemSelected(MenuItem menuItem)
     {
         menuItem.setChecked(!menuItem.isChecked());
+
+        filters.changeActive(menuItem.getItemId());
+
         return false;
     }
 
