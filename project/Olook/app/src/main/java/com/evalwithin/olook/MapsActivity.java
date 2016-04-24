@@ -1,5 +1,10 @@
 package com.evalwithin.olook;
 
+import android.app.Activity;
+import android.app.FragmentManager;
+import android.content.ComponentName;
+import android.content.Context;
+import android.app.Fragment;
 import android.content.Intent;
 import android.location.Location;
 import android.os.Bundle;
@@ -17,9 +22,9 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.UiSettings;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 
 public class MapsActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, OnMapReadyCallback, GPSListener, OrientationListener {
@@ -31,11 +36,13 @@ public class MapsActivity extends AppCompatActivity
     private static String TAG = MapsActivity.class.getSimpleName();
 
     private GoogleMap mMap;
+    private Marker mLastOpenned = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -51,6 +58,7 @@ public class MapsActivity extends AppCompatActivity
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
+
         mapFragment.getMapAsync(this);
         MapUtils.init(getResources());
 
@@ -62,6 +70,8 @@ public class MapsActivity extends AppCompatActivity
         dataManager.start();
 
         gpsTracker = new GPSTracker(getApplicationContext());
+        gpsTracker.addListener(this);
+
         orientationTracker = new OrientationTracker(getApplicationContext());
         orientationTracker.addListener(this);
 
@@ -70,6 +80,8 @@ public class MapsActivity extends AppCompatActivity
         cameraItem.setIcon(R.drawable.ic_menu_camera);
         cameraItem.setTitle(R.string.camera);
     }
+
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -109,6 +121,25 @@ public class MapsActivity extends AppCompatActivity
         mMap = googleMap;
         mMap.getUiSettings().setScrollGesturesEnabled(false);
         mMap.getUiSettings().setRotateGesturesEnabled(false);
+        mMap.getUiSettings().setCompassEnabled(false);
+        mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+            public boolean onMarkerClick(Marker marker) {
+                if (mLastOpenned != null) {
+
+                    mLastOpenned.hideInfoWindow();
+
+                    if (mLastOpenned.equals(marker)) {
+                        mLastOpenned = null;
+                        return true;
+                    }
+                }
+
+                marker.showInfoWindow();
+                mLastOpenned = marker;
+
+                return true;
+            }
+        });
 
         //mMap.getUiSettings().setScrollGesturesEnabled(false);
         //mMap.getUiSettings().setCompassEnabled(false);
@@ -119,7 +150,7 @@ public class MapsActivity extends AppCompatActivity
         centerMap(loc, 15);
 
         MapUtils.setMyLocation(mMap, ll);
-        MapUtils.addInterestPoint(googleMap, new LatLng(-30, 140), "Nice area!");
+        MapUtils.addInterestPoint(googleMap, new LatLng(45.410600, -71.887200), MapUtils.IconIndex.WIFI, "Nice area!");
 
         googleMap.setOnCameraChangeListener(new GoogleMap.OnCameraChangeListener() {
             private float lastZoom = 1;
@@ -150,7 +181,7 @@ public class MapsActivity extends AppCompatActivity
                     cumulativeZoom = 0;
                 }
 
-                if (needToCenter) {
+                if (true) {//needToCenter) {
                     centerMap(gpsTracker.getLocation());
                 }
 
@@ -215,5 +246,9 @@ public class MapsActivity extends AppCompatActivity
 
         LatLng myLatLng = new LatLng(location.getLatitude(), location.getLongitude());
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(myLatLng, zoom));
+    }
+
+    private void fillMarkers(){
+
     }
 }
