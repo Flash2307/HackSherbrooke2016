@@ -23,4 +23,31 @@
 
     <include layout="@layout/content_main" />
 
+    <LinearLayout
+        android:id="@+id/bottom_sheet"
+        android:layout_width="match_parent"
+        android:layout_height="150dp"
+        android:clipToPadding="true"
+        android:background="@android:color/white"
+        android:orientation="vertical"
+        app:layout_behavior="android.support.design.widget.BottomSheetBehavior"
+        >
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Title"
+            android:padding="16dp"
+            android:textSize="16sp"
+            android:id="@+id/bottom_sheet_title"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Description"
+            android:padding="16dp"
+            android:textSize="16sp"
+            android:id="@+id/bottom_sheet_description"/>
+
+    </LinearLayout>
+
 </android.support.design.widget.CoordinatorLayout>
