@@ -15,6 +15,7 @@ import android.widget.TextView;
 
 import com.evalwithin.olook.Data.AreaOfInterest;
 import com.evalwithin.olook.Data.DataManager;
+import com.google.android.gms.maps.model.LatLng;
 
 import java.util.ArrayList;
 import java.util.Map;
@@ -29,6 +30,8 @@ public class CameraActivity extends AppCompatActivity implements NavigationView.
     private RelativeLayout mLayout;
 
     private GPSTracker gpsTracker;
+    private boolean hasLocation = false;
+
     private OrientationTracker orientationTracker;
     Map<String, ArrayList<AreaOfInterest>> localData;
 
@@ -119,10 +122,15 @@ public class CameraActivity extends AppCompatActivity implements NavigationView.
         Location loc = gpsTracker.getLocation();
         double radius = 500;
         localData = DataManager.getInstance().getAreaOfInterestValues(loc.getLongitude(), loc.getLatitude(), radius);
+        hasLocation = true;
     }
 
     @Override
     public void onOrientationChanged(float azimut, float pitch, float roll) {
+        if (!hasLocation) {
+            return;
+        }
+
         float x = azimut;
         float y = pitch;
         float z = roll;
@@ -134,36 +142,89 @@ public class CameraActivity extends AppCompatActivity implements NavigationView.
             sampleOrientationZ[sampleOrientationCount] = z;
             sampleOrientationCount++;
         } else {
+            // average
+            double avgX = sampleOrientationX[0];
+            double avgY = sampleOrientationY[0];
+            double avgZ = sampleOrientationZ[0];
+
             // calculate cumulative error
-            double errorX = sampleOrientationX[0];
-            double errorY = sampleOrientationY[0];
-            double errorZ = sampleOrientationZ[0];
+            double errorX, errorY, errorZ;
+            errorX = errorY = errorZ = 0;
 
             for (int i=1; i<sampleOrientationCount-1; i++) {
-                errorX += 10*(sampleOrientationX[i + 1] - sampleOrientationX[i]);
-                errorY += 10*(sampleOrientationY[i + 1] - sampleOrientationY[i]);
-                errorZ += 10*(sampleOrientationZ[i + 1] - sampleOrientationZ[i]);
+                avgX += sampleOrientationX[i];
+                avgY += sampleOrientationY[i];
+                avgZ += sampleOrientationZ[i];
+
+                errorX += 10*Math.abs(sampleOrientationX[i + 1] - sampleOrientationX[i]);
+                errorY += 10*Math.abs(sampleOrientationY[i + 1] - sampleOrientationY[i]);
+                errorZ += 10*Math.abs(sampleOrientationZ[i + 1] - sampleOrientationZ[i]);
+            }
+
+            avgX /= ORIENTATION_SAMPLE_SIZE;
+            avgY /= ORIENTATION_SAMPLE_SIZE;
+            avgZ /= ORIENTATION_SAMPLE_SIZE;
+
+            double cumulativeError = errorX + errorY + errorY;
+            if (cumulativeError < 18) {
+                if (Math.abs(avgY) > 0.5) {
+                    searchNearestDirection(avgX);
+                }
             }
 
             sampleOrientationCount = 0;
-
-            double cumulativeError = errorX + errorY + errorY;
-            if (cumulativeError < 4) {
-                txAxisX.setText("x: " + String.format("%.3f", x));
-                txAxisY.setText("y: " + String.format("%.3f", y));
-                txAxisZ.setText("z: " + String.format("%.3f", z));
-            }
-
-            /*
-            txAxisX.setText("Error X: " + String.format("%.3f", errorX));
-            txAxisY.setText("Error Y: " + String.format("%.3f", errorY));
-            txAxisZ.setText("Error Z: " + String.format("%.3f", errorZ));
-            */
         }
     }
 
     @Override
     public void onAccuracyChanged(int accuracy) {
 
+    }
+
+    private void searchNearestDirection(double azimut) {
+        // search nearest at direction
+        Location myLoc = gpsTracker.getLocation();
+        ArrayList<AreaOfInterest> potentialAreas = new ArrayList<AreaOfInterest>();
+
+        Set<String> keys = localData.keySet();
+        for (String key: keys) {
+            MapUtils.IconIndex idx = MapUtils.getIconIndex(key);
+            for (AreaOfInterest area : localData.get(key)) {
+                if (isAreaInAzimut(area, myLoc, azimut)) {
+                    potentialAreas.add(area);
+                }
+            }
+        }
+
+        if (potentialAreas.size() > 0) {
+            Location firstArea = new Location("First");
+            firstArea.setLongitude(potentialAreas.get(0).getLocX());
+            firstArea.setLatitude(potentialAreas.get(0).getLocY());
+            double minDistance = myLoc.distanceTo(firstArea);
+            AreaOfInterest minDistanceArea = potentialAreas.get(0);
+
+            for (AreaOfInterest area : potentialAreas) {
+                Location loc = new Location("Next loc");
+                loc.setLongitude(area.getLocX());
+                loc.setLatitude(area.getLocY());
+                double distance = myLoc.distanceTo(loc);
+
+                if (distance < minDistance) {
+                    minDistance = distance;
+                    minDistanceArea = area;
+                }
+            }
+
+            txAxisX.setText(minDistanceArea.getLocationName());
+        }
+    }
+
+    private boolean isAreaInAzimut(AreaOfInterest area, Location myLocation, double azimut) {
+        final double DELTA = 0.3F;
+
+        double distY = area.getLocY() - myLocation.getLatitude();
+        double distX = area.getLocX() - myLocation.getLongitude();
+        double angleArea = Math.atan2(distY, distX);
+        return angleArea >= (azimut - DELTA) && angleArea <= (azimut + DELTA);
     }
 }
