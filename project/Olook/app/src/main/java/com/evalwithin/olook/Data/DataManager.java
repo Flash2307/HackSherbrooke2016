@@ -145,7 +145,7 @@ public class DataManager extends Thread
                     break;
             }
 
-            if (areaOfInterestMap.get(filterName).isEmpty())
+            if (areaOfInterestMap.get(filterName).isEmpty() && !fileName.isEmpty())
             {
                 ArrayList<AreaOfInterest> file = readFile(fileName);
                 if (file != null)
