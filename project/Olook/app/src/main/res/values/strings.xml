@@ -11,4 +11,11 @@
     <string name="filter_name_parking">Stationnement public</string>
     <string name="filter_name_zap">ZAP</string>
     <string name="filter_name_parcometre">Parcomètre</string>
+
+    <string-array name="filter_array">
+        <item>Attraits</item>
+        <item>Stationnement public</item>
+        <item>ZAP</item>
+        <item>Parcomètre</item>
+    </string-array>
 </resources>

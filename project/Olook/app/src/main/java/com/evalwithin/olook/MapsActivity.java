@@ -28,6 +28,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Map;
 import java.util.Set;
 
@@ -70,10 +71,15 @@ public class MapsActivity extends AppCompatActivity
         mapFragment.getMapAsync(this);
         MapUtils.init(getResources());
 
+        String[] filterNames = getResources().getStringArray(R.array.filter_array);
+
         filters = new FilterItems();
+        filters.addFilters(Arrays.asList(filterNames));
+
+        /*filters = new FilterItems();
         filters.addFilter(getResources().getString(R.string.filter_name_attrait));
         filters.addFilter(getResources().getString(R.string.filter_name_parking));
-        filters.addFilter(getResources().getString(R.string.filter_name_zap));
+        filters.addFilter(getResources().getString(R.string.filter_name_zap));*/
 
         DataManager dataManager = DataManager.getInstance();
         if (dataManager.getState() == Thread.State.NEW)
