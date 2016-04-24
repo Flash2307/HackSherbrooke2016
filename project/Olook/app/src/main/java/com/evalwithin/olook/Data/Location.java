@@ -1,9 +1,11 @@
 package com.evalwithin.olook.Data;
 
+import java.io.Serializable;
+
 /**
  * Created by Pascal on 23/04/2016.
  */
-public class Location {
+public class Location implements Serializable {
 
     protected double locX;
     protected double locY;
