@@ -3,6 +3,7 @@ package com.evalwithin.olook.Data;
 
 import android.content.Context;
 import android.os.Process;
+import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.evalwithin.olook.OLookApp;
@@ -16,8 +17,10 @@ import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Created by Pascal on 23/04/2016.
@@ -32,6 +35,8 @@ public class DataManager extends Thread
     private String attraitName;
     private String parkingName;
     private String zapName;
+
+    private boolean dataFetched;
 
     Map<String, ArrayList<AreaOfInterest>> areaOfInterestMap;
 
@@ -53,6 +58,8 @@ public class DataManager extends Thread
         areaOfInterestMap.put(attraitName, new ArrayList<AreaOfInterest>());
         areaOfInterestMap.put(parkingName, new ArrayList<AreaOfInterest>());
         areaOfInterestMap.put(zapName, new ArrayList<AreaOfInterest>());
+
+        dataFetched = false;
     }
 
     public static DataManager getInstance()
@@ -80,6 +87,11 @@ public class DataManager extends Thread
             {
                 areaOfInterestMap.put(attraitName, fileAttrait);
             }
+            else
+            {
+                ArrayList<AreaOfInterest> listAttrait = updateAttrait();
+                areaOfInterestMap.put(attraitName, listAttrait);
+            }
         }
 
         if (areaOfInterestMap.get(parkingName).isEmpty())
@@ -88,6 +100,11 @@ public class DataManager extends Thread
             if (fileParking != null)
             {
                 areaOfInterestMap.put(parkingName, fileParking);
+            }
+            else
+            {
+                ArrayList<AreaOfInterest> listParking = updateParking();
+                areaOfInterestMap.put(parkingName, listParking);
             }
         }
 
@@ -98,7 +115,14 @@ public class DataManager extends Thread
             {
                 areaOfInterestMap.put(zapName, fileZap);
             }
+            else
+            {
+                ArrayList<AreaOfInterest> listZap = updateZAP();
+                areaOfInterestMap.put(zapName, listZap);
+            }
         }
+
+        dataFetched = true;
 
         while(true)
         {
@@ -122,7 +146,43 @@ public class DataManager extends Thread
 
     public Map<String, ArrayList<AreaOfInterest>> getAreaOfInterestValues(double locX, double locY, double radius)
     {
-        return areaOfInterestMap;
+        while (!dataFetched)
+        {
+            try {
+                Thread.sleep(1000);
+            }
+            catch (InterruptedException e){}
+        }
+
+        Map<String, ArrayList<AreaOfInterest>> sortedLocationMap = new HashMap<>();
+
+        for(String key : areaOfInterestMap.keySet())
+        {
+            ArrayList<AreaOfInterest> locations = areaOfInterestMap.get(key);
+            ArrayList<AreaOfInterest> sortedLocations = new ArrayList<>();
+
+            for(AreaOfInterest location : locations)
+            {
+                if(radius >= distance(location.getLocX(), locX, location.getLocY(), locY))
+                {
+                    sortedLocations.add(location);
+                }
+            }
+
+            if(sortedLocations.size() > 0)
+            {
+                sortedLocationMap.put(key, sortedLocations);
+            }
+        }
+
+        return sortedLocationMap;
+    }
+
+    private double distance(double x1, double x2, double y1, double y2)
+    {
+        double deltaX = x1 - x2;
+        double deltaY = y1 - y2;
+        return Math.sqrt(deltaX * deltaX + deltaY * deltaY);
     }
 
     private String getDataString(String url)

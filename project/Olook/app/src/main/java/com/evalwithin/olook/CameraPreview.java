@@ -64,7 +64,9 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
         mHolder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD) {
-            if (Camera.getNumberOfCameras() > cameraId) {
+            if(Camera.getNumberOfCameras() == 0) {
+                return;
+            } else if (Camera.getNumberOfCameras() > cameraId) {
                 mCameraId = cameraId;
             } else {
                 mCameraId = 0;
@@ -101,33 +103,39 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
     }
 
     private void doSurfaceChanged(int width, int height) {
-        mCamera.stopPreview();
-        
-        Camera.Parameters cameraParams = mCamera.getParameters();
-        boolean portrait = isPortrait();
+        try {
+            mCamera.stopPreview();
 
-        // The code in this if-statement is prevented from executed again when surfaceChanged is
-        // called again due to the change of the layout size in this if-statement.
-        if (!mSurfaceConfiguring) {
-            Camera.Size previewSize = determinePreviewSize(portrait, width, height);
-            Camera.Size pictureSize = determinePictureSize(previewSize);
-            if (DEBUGGING) { Log.v(LOG_TAG, "Desired Preview Size - w: " + width + ", h: " + height); }
-            mPreviewSize = previewSize;
-            mPictureSize = pictureSize;
-            mSurfaceConfiguring = adjustSurfaceLayoutSize(previewSize, portrait, width, height);
-            // Continue executing this method if this method is called recursively.
-            // Recursive call of surfaceChanged is very special case, which is a path from
-            // the catch clause at the end of this method.
-            // The later part of this method should be executed as well in the recursive
-            // invocation of this method, because the layout change made in this recursive
-            // call will not trigger another invocation of this method.
-            if (mSurfaceConfiguring && (mSurfaceChangedCallDepth <= 1)) {
-                return;
+            Camera.Parameters cameraParams = mCamera.getParameters();
+            boolean portrait = isPortrait();
+
+            // The code in this if-statement is prevented from executed again when surfaceChanged is
+            // called again due to the change of the layout size in this if-statement.
+            if (!mSurfaceConfiguring) {
+                Camera.Size previewSize = determinePreviewSize(portrait, width, height);
+                Camera.Size pictureSize = determinePictureSize(previewSize);
+                if (DEBUGGING) {
+                    Log.v(LOG_TAG, "Desired Preview Size - w: " + width + ", h: " + height);
+                }
+                mPreviewSize = previewSize;
+                mPictureSize = pictureSize;
+                mSurfaceConfiguring = adjustSurfaceLayoutSize(previewSize, portrait, width, height);
+                // Continue executing this method if this method is called recursively.
+                // Recursive call of surfaceChanged is very special case, which is a path from
+                // the catch clause at the end of this method.
+                // The later part of this method should be executed as well in the recursive
+                // invocation of this method, because the layout change made in this recursive
+                // call will not trigger another invocation of this method.
+                if (mSurfaceConfiguring && (mSurfaceChangedCallDepth <= 1)) {
+                    return;
+                }
             }
-        }
 
-        configureCameraParameters(cameraParams, portrait);
-        mSurfaceConfiguring = false;
+            configureCameraParameters(cameraParams, portrait);
+            mSurfaceConfiguring = false;
+        } catch (Exception e) {
+            Log.w(LOG_TAG, "Failed to stop preview: " + e.getMessage());
+        }
 
         try {
             mCamera.startPreview();

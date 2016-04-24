@@ -42,6 +42,7 @@ public class MapsActivity extends AppCompatActivity
 
     private GoogleMap mMap;
     private Marker mLastOpenned = null;
+    private Compass mCompass;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,8 +69,9 @@ public class MapsActivity extends AppCompatActivity
         MapUtils.init(getResources());
 
         filters = new FilterItems();
-        filters.addFilter("Test 1");
-        filters.addFilter("Beauté");
+        filters.addFilter(getResources().getString(R.string.filter_name_attrait));
+        filters.addFilter(getResources().getString(R.string.filter_name_parking));
+        filters.addFilter(getResources().getString(R.string.filter_name_zap));
 
         DataManager dataManager = DataManager.getInstance();
         dataManager.start();
@@ -84,6 +86,8 @@ public class MapsActivity extends AppCompatActivity
         MenuItem cameraItem = menu.findItem(R.id.nav_camera);
         cameraItem.setIcon(R.drawable.ic_menu_camera);
         cameraItem.setTitle(R.string.camera);
+
+        mCompass = (Compass) findViewById(R.id.compass);
     }
 
 
@@ -106,6 +110,8 @@ public class MapsActivity extends AppCompatActivity
         menuItem.setChecked(!menuItem.isChecked());
 
         filters.changeActive(menuItem.getItemId());
+
+        DataManager.getInstance().getAreaOfInterestValues(-71.8824, 45.4010, 50d);
 
         return false;
     }
@@ -203,6 +209,7 @@ public class MapsActivity extends AppCompatActivity
     @Override
     public void onOrientationChanged(float orientation) {
         //System.out.println(orientation);
+        mCompass.updateDirection(orientation);
     }
 
     @Override
