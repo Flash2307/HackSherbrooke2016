@@ -37,6 +37,7 @@ public class MapsActivity extends AppCompatActivity
 
     private GoogleMap mMap;
     private Marker mLastOpenned = null;
+    private Compass mCompass;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -81,6 +82,8 @@ public class MapsActivity extends AppCompatActivity
         MenuItem cameraItem = menu.findItem(R.id.nav_camera);
         cameraItem.setIcon(R.drawable.ic_menu_camera);
         cameraItem.setTitle(R.string.camera);
+
+        mCompass = (Compass) findViewById(R.id.compass);
     }
 
 
@@ -202,6 +205,7 @@ public class MapsActivity extends AppCompatActivity
     @Override
     public void onOrientationChanged(float orientation) {
         //System.out.println(orientation);
+        mCompass.updateDirection(orientation);
     }
 
     @Override
