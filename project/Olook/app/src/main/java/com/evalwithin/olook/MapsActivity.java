@@ -76,7 +76,7 @@ public class MapsActivity extends AppCompatActivity
         if(menu.size() == 0)
         {
             for (FilterItems.FilterItem filterItem : filters.getFilterItems()) {
-                menu.add(0, filterItem.getId(), Menu.NONE, filterItem.getName()).setCheckable(true);
+                menu.add(0, filterItem.getId(), Menu.NONE, filterItem.getName()).setCheckable(true).setChecked(true);
             }
         }
 
