@@ -5,7 +5,9 @@ import android.content.Context;
 import android.os.Process;
 import android.util.Log;
 
+import com.evalwithin.olook.FilterItems;
 import com.evalwithin.olook.OLookApp;
+import com.evalwithin.olook.R;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -15,7 +17,8 @@ import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by Pascal on 23/04/2016.
@@ -25,11 +28,14 @@ public class DataManager extends Thread
 {
     private static DataManager instance = null;
 
-    public final int INDEX_ATTRAIT = 0;
-    public final int INDEX_PARKING = 1;
-    public final int INDEX_ZAP = 2;
+    private final long WAIT_TIME = 30000; //7200000;
 
-    ArrayList<ArrayList<Location>> locationsList;
+    private String attraitName;
+    private String parkingName;
+    private String zapName;
+
+    //ArrayList<ArrayList<Location>> locationsList;
+    Map<String, ArrayList<Location>> locationMap;
 
     /*
      * Arraylist ids - 0 : Attraits
@@ -39,10 +45,16 @@ public class DataManager extends Thread
 
     protected DataManager()
     {
-        locationsList = new ArrayList<>();
-        locationsList.add(new ArrayList<Location>());
-        locationsList.add(new ArrayList<Location>());
-        locationsList.add(new ArrayList<Location>());
+        Context context = OLookApp.getAppContext();
+
+        attraitName = context.getResources().getString(R.string.filter_name_attrait);
+        parkingName = context.getResources().getString(R.string.filter_name_parking);
+        zapName = context.getResources().getString(R.string.filter_name_zap);
+
+        locationMap = new HashMap<>();
+        locationMap.put(attraitName, new ArrayList<Location>());
+        locationMap.put(parkingName, new ArrayList<Location>());
+        locationMap.put(zapName, new ArrayList<Location>());
     }
 
     public static DataManager getInstance()
@@ -52,65 +64,67 @@ public class DataManager extends Thread
         return instance;
     }
 
-    public ArrayList<Location> getLocationList(int listIndex)
+    public ArrayList<Location> getLocationList(String listName)
     {
-        return locationsList.get(listIndex);
+        return locationMap.get(listName);
     }
 
     @Override
     public void run()
     {
-        Process.setThreadPriority(Process.THREAD_PRIORITY_BACKGROUND);
+        Process.setThreadPriority(Process.THREAD_PRIORITY_LOWEST);
+        Context context = OLookApp.getAppContext();
+
+        if (locationMap.get(attraitName).isEmpty())
+        {
+            ArrayList<Location> fileAttrait = readFile(Attrait.ATTRAIT_FILENAME);
+            if (fileAttrait != null)
+            {
+                locationMap.put(attraitName, fileAttrait);
+            }
+        }
+
+        if (locationMap.get(parkingName).isEmpty())
+        {
+            ArrayList<Location> fileParking = readFile(Parking.PARKING_FILENAME);
+            if (fileParking != null)
+            {
+                locationMap.put(parkingName, fileParking);
+            }
+        }
+
+        if (locationMap.get(zapName).isEmpty())
+        {
+            ArrayList<Location> fileZap = readFile(Zap.ZAP_FILENAME);
+            if (fileZap != null)
+            {
+                locationMap.put(zapName, fileZap);
+            }
+        }
 
         while(true)
         {
-            //TODO: Verify if file exists --> Create/Update if not existing
-            if (locationsList.get(INDEX_ATTRAIT).isEmpty())
-            {
-                ArrayList<Location> fileAttrait = readFile(Attrait.ATTRAIT_FILENAME);
-                if (fileAttrait != null)
-                {
-                    locationsList.set(INDEX_ATTRAIT, fileAttrait);
-                }
-            }
-
-            if (locationsList.get(INDEX_PARKING).isEmpty())
-            {
-                ArrayList<Location> fileParking = readFile(Parking.PARKING_FILENAME);
-                if (fileParking != null)
-                {
-                    locationsList.set(INDEX_PARKING, fileParking);
-                }
-            }
-
-            if (locationsList.get(INDEX_ZAP).isEmpty())
-            {
-                ArrayList<Location> fileZap = readFile(Zap.ZAP_FILENAME);
-                if (fileZap != null)
-                {
-                    locationsList.set(INDEX_ZAP, fileZap);
-                }
-            }
-
-
-            //TODO: Verify last modified date of file --> Update if too old
-            ArrayList<Location> listAttrait = updateAttrait();
-            ArrayList<Location> listParking = updateParking();
-            ArrayList<Location> listZap = updateZAP();
-
-            //TODO: Update to ram
-            locationsList.set(INDEX_ATTRAIT, listAttrait);
-            locationsList.set(INDEX_PARKING, listParking);
-            locationsList.set(INDEX_ZAP, listZap);
-
             try
             {
-                Thread.sleep(30000);
+                Thread.sleep(WAIT_TIME);
             }
             catch (InterruptedException e)
             {
             }
+
+            ArrayList<Location> listAttrait = updateAttrait();
+            ArrayList<Location> listParking = updateParking();
+            ArrayList<Location> listZap = updateZAP();
+
+            locationMap.put(attraitName, listAttrait);
+            locationMap.put(parkingName, listParking);
+            locationMap.put(zapName, listZap);
         }
+    }
+
+    public Map<String, ArrayList<Location>> getLocationValues(double locX, double locY, double radius)
+    {
+        return locationMap;
     }
 
     private String getDataString(String url)
