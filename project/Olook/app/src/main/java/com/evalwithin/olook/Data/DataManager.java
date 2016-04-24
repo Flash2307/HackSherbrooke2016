@@ -69,6 +69,16 @@ public class DataManager extends Thread
         return areaOfInterestMap.get(listName);
     }
 
+    public ArrayList<String> getMapKeys()
+    {
+        ArrayList<String> keys = new ArrayList<>();
+        for(String key : areaOfInterestMap.keySet())
+        {
+            keys.add(key);
+        }
+        return keys;
+    }
+
     @Override
     public void run()
     {
