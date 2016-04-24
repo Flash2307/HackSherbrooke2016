@@ -1,12 +1,18 @@
 <resources>
     <string name="app_name">OLook</string>
     <string name="google_app_id">OLook</string>
-    <string name="title_activity_maps">Map</string>
-    <string name="map">Map</string>
-    <string name="camera">Camera</string>
-    <string name="drawer_open">open</string>
-    <string name="drawer_close">close</string>
-    <string name="action_settings">Settings</string>
+    <string name="title_activity_maps">Carte</string>
+
+    <string name="map">Carte</string>
+    <string name="camera">Caméra</string>
+    <string name="properties">Propriétés</string>
+    <string name="social_media">Médias Sociaux</string>
+
+    <string name="drawer_open">Ouvert</string>
+    <string name="drawer_close">Fermé</string>
+    <string name="action_settings">Options</string>
+    <string name="no_title">Aucun Titre</string>
+    <string name="no_description">Aucune Description</string>
 
     <string-array name="filter_array">
         <item>Attraits</item>
