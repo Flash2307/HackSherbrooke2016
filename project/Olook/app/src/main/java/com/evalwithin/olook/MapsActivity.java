@@ -109,8 +109,6 @@ public class MapsActivity extends AppCompatActivity
 
         filters.changeActive(menuItem.getItemId());
 
-        DataManager.getInstance().getAreaOfInterestValues(-71.8824, 45.4010, 50d);
-
         return false;
     }
 
@@ -135,7 +133,9 @@ public class MapsActivity extends AppCompatActivity
             public boolean onMarkerClick(Marker marker) {
                 if (mLastOpenned != null) {
 
-                    mLastOpenned.hideInfoWindow();
+                    //mLastOpenned.hideInfoWindow();
+
+
 
                     if (mLastOpenned.equals(marker)) {
                         mLastOpenned = null;
@@ -143,7 +143,7 @@ public class MapsActivity extends AppCompatActivity
                     }
                 }
 
-                marker.showInfoWindow();
+                //marker.showInfoWindow();
                 mLastOpenned = marker;
 
                 return true;
