@@ -70,10 +70,11 @@ public class MapUtils {
         marker = map.addMarker(markerOptions);
     }
 
-    static void addInterestPoint(GoogleMap map, LatLng coord, IconIndex icon, String description) {
+    static Marker addInterestPoint(GoogleMap map, LatLng coord, IconIndex icon, String description) {
         MarkerOptions marker = new MarkerOptions().position(coord).title(description);
         marker.icon(iconImages[icon.value]);
-        map.addMarker(marker);
+        Marker newMarker = map.addMarker(marker);
+        return newMarker;
     }
 
     static IconIndex getIconIndex(String dataset){

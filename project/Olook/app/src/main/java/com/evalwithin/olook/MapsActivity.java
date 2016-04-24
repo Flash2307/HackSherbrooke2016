@@ -29,6 +29,7 @@ import com.google.android.gms.maps.model.Marker;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
@@ -46,6 +47,8 @@ public class MapsActivity extends AppCompatActivity
     private Compass mCompass;
 
     Location lastDatapoint = null;
+
+    private Map<String, ArrayList<Marker>> markerMap;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -92,6 +95,7 @@ public class MapsActivity extends AppCompatActivity
         cameraItem.setTitle(R.string.camera);
 
         mCompass = (Compass) findViewById(R.id.compass);
+        markerMap = new HashMap<>();
     }
 
 
@@ -114,6 +118,17 @@ public class MapsActivity extends AppCompatActivity
         menuItem.setChecked(!menuItem.isChecked());
 
         filters.changeActive(menuItem.getItemId());
+
+        for(FilterItems.FilterItem item : filters.getFilterItems())
+        {
+            String key = item.getName();
+            ArrayList<Marker> curMarker = markerMap.get(key);
+
+            for (Marker marker : curMarker)
+            {
+                marker.setVisible(item.isActive());
+            }
+        }
 
         return false;
     }
@@ -139,7 +154,7 @@ public class MapsActivity extends AppCompatActivity
             public boolean onMarkerClick(Marker marker) {
                 if (mLastOpenned != null) {
 
-                    //mLastOpenned.hideInfoWindow();
+                    mLastOpenned.hideInfoWindow();
 
 
 
@@ -149,7 +164,7 @@ public class MapsActivity extends AppCompatActivity
                     }
                 }
 
-                //marker.showInfoWindow();
+                marker.showInfoWindow();
                 mLastOpenned = marker;
 
                 return true;
@@ -278,9 +293,13 @@ public class MapsActivity extends AppCompatActivity
 
         for (String key: keys) {
             MapUtils.IconIndex idx = MapUtils.getIconIndex(key);
+            ArrayList<Marker> markerList = new ArrayList<>();
             for (AreaOfInterest area : data.get(key)) {
-                MapUtils.addInterestPoint(mMap, new LatLng(area.getLocY(), area.getLocX()), idx, area.getLocationName());
+                Marker marker = MapUtils.addInterestPoint(mMap, new LatLng(area.getLocY(), area.getLocX()), idx, area.getLocationName());
+                markerList.add(marker);
             }
+            markerMap.put(key, markerList);
         }
+
     }
 }
