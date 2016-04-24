@@ -28,7 +28,7 @@ public class DataManager extends Thread
 {
     private static DataManager instance = null;
 
-    private final long WAIT_TIME = 30000; //7200000;
+    private final long WAIT_TIME = 300000; //7200000;
 
     private String attraitName;
     private String parkingName;

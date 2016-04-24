@@ -67,7 +67,8 @@ public class MapsActivity extends AppCompatActivity
         filters.addFilter("Beauté");
 
         DataManager dataManager = DataManager.getInstance();
-        dataManager.start();
+        if (dataManager.getState() == Thread.State.NEW)
+            dataManager.start();
 
         gpsTracker = new GPSTracker(getApplicationContext());
         gpsTracker.addListener(this);
