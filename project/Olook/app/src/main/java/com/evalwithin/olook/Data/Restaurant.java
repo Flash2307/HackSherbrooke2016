@@ -1,11 +1,13 @@
 package com.evalwithin.olook.Data;
 
+import android.graphics.MaskFilter;
 import android.util.Log;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 
 /**
@@ -22,7 +24,7 @@ public class Restaurant extends AreaOfInterest
 
     public Restaurant (double locX, double locY, String name, String phoneNumber, String descCourte, String address)
     {
-        super(locX, locY, name, address + "<b><br /><a href='tel:" + phoneNumber.toString() + "'>" + phoneNumber.toString() + "</a></b><br />" + descCourte);
+        super(locX, locY, name, address + "<br /><b>" + phoneNumber + "</b></a><br />" + descCourte);
         this.phoneNumber = phoneNumber;
         this.descCourte = descCourte;
         this.address = address;
@@ -30,7 +32,7 @@ public class Restaurant extends AreaOfInterest
 
     public String getPhoneNumber()
     {
-        return phoneNumber;
+        return new DecimalFormat("(###) ###-####").format(phoneNumber);
     }
 
     public static ArrayList<AreaOfInterest> parseString(String dataString)
@@ -47,6 +49,9 @@ public class Restaurant extends AreaOfInterest
                 double locY = obj.optDouble("Latitude", 0);
                 String name = obj.getString("Nom");
                 String phoneNbr = obj.optString("NumeroTelephone", "");
+                try {
+                    phoneNbr = phoneNbr.format("(%s) %s-%s", phoneNbr.substring(0, 3), phoneNbr.substring(3, 6), phoneNbr.substring(6, 10));
+                } catch (Exception ex) {}
                 String descCourte = obj.optString("DescriptionCourte", "");
                 String addr = obj.optString("NumeroCivique", "");
                 addr += " " + obj.optString("Rue", "");

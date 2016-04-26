@@ -177,7 +177,7 @@ public class MapsActivity extends AppCompatActivity
     public void onMapReady(final GoogleMap googleMap) {
 
         mMap = googleMap;
-        mMap.getUiSettings().setScrollGesturesEnabled(false);
+        //mMap.getUiSettings().setScrollGesturesEnabled(false);
         mMap.getUiSettings().setRotateGesturesEnabled(false);
         mMap.getUiSettings().setCompassEnabled(false);
         mMap.getUiSettings().setMapToolbarEnabled(false);
@@ -228,7 +228,7 @@ public class MapsActivity extends AppCompatActivity
         MapUtils.setMyLocation(mMap, ll);
         //MapUtils.addInterestPoint(googleMap, new LatLng(45.410600, -71.887200), MapUtils.IconIndex.WIFI, "Nice area!");
 
-        googleMap.setOnCameraChangeListener(new GoogleMap.OnCameraChangeListener() {
+        /*googleMap.setOnCameraChangeListener(new GoogleMap.OnCameraChangeListener() {
             private float lastZoom = 1;
             private LatLng lastPos = new LatLng(0, 0);
 
@@ -269,6 +269,7 @@ public class MapsActivity extends AppCompatActivity
         CameraPosition oldPos = googleMap.getCameraPosition();
         CameraPosition pos = CameraPosition.builder(oldPos).bearing(245.0F).build();
         googleMap.moveCamera(CameraUpdateFactory.newCameraPosition(pos));
+        */
     }
 
     @Override
@@ -303,13 +304,17 @@ public class MapsActivity extends AppCompatActivity
 
     @Override
     public void onGPSLocationChanged(Location newLocation) {
-        if(lastDatapoint == null || MapUtils.getDistance(lastDatapoint, newLocation) > 250) {
+        if (lastDatapoint == null) {
+            centerMap(newLocation);
+        }
+
+        if (lastDatapoint == null || MapUtils.getDistance(lastDatapoint, newLocation) > 250) {
             clearMarkers();
             fillMarkers();
             lastDatapoint = newLocation;
         }
 
-        centerMap(newLocation);
+        //centerMap(newLocation);
         LatLng ll = new LatLng(newLocation.getLatitude(), newLocation.getLongitude());
         MapUtils.setMyLocation(mMap, ll);
     }
@@ -342,7 +347,7 @@ public class MapsActivity extends AppCompatActivity
 
     private void fillMarkers(){
         Location loc = gpsTracker.getLocation();
-        double radius = 3500;
+        double radius = 80000;
         Map<String, ArrayList<AreaOfInterest>> data = DataManager.getInstance().getAreaOfInterestValues(loc.getLongitude(), loc.getLatitude(), radius);
 
         Set<String> keys = data.keySet();
