@@ -143,13 +143,19 @@ public class MapsActivity extends AppCompatActivity
 
     @Override
     public boolean onOptionsItemSelected(MenuItem menuItem) {
+        int id = menuItem.getItemId();
         menuItem.setChecked(!menuItem.isChecked());
 
-        filters.changeActive(menuItem.getItemId());
+        filters.changeActive(id);
+
+        ArrayList<FilterItems.FilterItem> filterItems = filters.getFilterItems();
+        String filterName = filterItems.get(id).getName();
 
         SharedPreferences.Editor prefEditor = pref.edit();
+        prefEditor.putBoolean(filterName, menuItem.isChecked());
+        prefEditor.commit();
 
-        for(FilterItems.FilterItem item : filters.getFilterItems())
+        for(FilterItems.FilterItem item : filterItems)
         {
             String key = item.getName();
             ArrayList<Marker> curMarker = markerMap.get(key);
@@ -161,11 +167,7 @@ public class MapsActivity extends AppCompatActivity
             {
                 marker.setVisible(item.isActive());
             }
-
-            prefEditor.putBoolean(key, item.isActive());
         }
-
-        prefEditor.commit();
 
         return false;
     }
