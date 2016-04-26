@@ -1,15 +1,10 @@
 package com.evalwithin.olook;
 
-import android.app.Activity;
-import android.app.FragmentManager;
-import android.content.ComponentName;
 import android.content.Context;
-import android.app.Fragment;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.location.Location;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.NavigationView;
@@ -48,8 +43,6 @@ public class MapsActivity extends AppCompatActivity
     private GPSTracker gpsTracker;
     private OrientationTracker orientationTracker;
     private FilterItems filters;
-
-    private static String TAG = MapsActivity.class.getSimpleName();
 
     private GoogleMap mMap;
     private Marker mLastOpenned = null;
