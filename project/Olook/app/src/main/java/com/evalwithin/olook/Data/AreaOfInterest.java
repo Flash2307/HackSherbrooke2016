@@ -12,11 +12,15 @@ public class AreaOfInterest implements Serializable {
     protected String locationName;
     protected String locationDesc;
 
-    public AreaOfInterest(double locX, double locY, String locationName, String locationDesc)
-    {
+    public AreaOfInterest(double locX, double locY, String locationName) {
         this.locX = locX;
         this.locY = locY;
         this.locationName = locationName;
+    }
+
+    public AreaOfInterest(double locX, double locY, String locationName, String locationDesc)
+    {
+        this(locX, locY, locationName);
         this.locationDesc = locationDesc;
     }
 

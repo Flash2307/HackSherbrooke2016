@@ -236,6 +236,8 @@ public class CameraActivity extends AppCompatActivity implements NavigationView.
             mOverlay.showDetection(areas, myLoc);
         }
 
+
+
         /*
         if (potentialAreas.size() > 0) {
             Location firstArea = new Location("First");

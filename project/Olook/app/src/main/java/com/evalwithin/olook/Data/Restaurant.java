@@ -1,11 +1,13 @@
 package com.evalwithin.olook.Data;
 
+import android.graphics.MaskFilter;
 import android.util.Log;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 
 /**
@@ -22,7 +24,7 @@ public class Restaurant extends AreaOfInterest
 
     public Restaurant (double locX, double locY, String name, String phoneNumber, String descCourte, String address)
     {
-        super(locX, locY, name, address + "<b><br /><a href='tel:" + phoneNumber.toString() + "'>" + phoneNumber.toString() + "</a></b><br />" + descCourte);
+        super(locX, locY, name, address + "<br /><b>" + phoneNumber + "</b></a><br />" + descCourte);
         this.phoneNumber = phoneNumber;
         this.descCourte = descCourte;
         this.address = address;
@@ -31,6 +33,22 @@ public class Restaurant extends AreaOfInterest
     public String getPhoneNumber()
     {
         return phoneNumber;
+    }
+
+    public static String formatPhoneNumber(String strNumber) {
+        String formattedPhoneNumber = "";
+        if (strNumber.length() == 10) {
+            try {
+                formattedPhoneNumber = String.format("(%s) %s-%s",
+                        strNumber.substring(0, 3),
+                        strNumber.substring(3, 6),
+                        strNumber.substring(6, 10)
+                );
+            } catch (NumberFormatException ex) {
+                formattedPhoneNumber = strNumber;
+            }
+        }
+        return formattedPhoneNumber;
     }
 
     public static ArrayList<AreaOfInterest> parseString(String dataString)
@@ -47,6 +65,7 @@ public class Restaurant extends AreaOfInterest
                 double locY = obj.optDouble("Latitude", 0);
                 String name = obj.getString("Nom");
                 String phoneNbr = obj.optString("NumeroTelephone", "");
+                phoneNbr = formatPhoneNumber(phoneNbr);
                 String descCourte = obj.optString("DescriptionCourte", "");
                 String addr = obj.optString("NumeroCivique", "");
                 addr += " " + obj.optString("Rue", "");
