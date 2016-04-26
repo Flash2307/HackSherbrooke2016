@@ -128,6 +128,20 @@ public class MapsActivity extends AppCompatActivity
     }
 
     @Override
+    protected void onPause() {
+        super.onPause();
+        gpsTracker.stop();
+        orientationTracker.stop();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        gpsTracker.initGPS();
+        orientationTracker.initSensors();
+    }
+
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         if(menu.size() == 0)
         {

@@ -43,7 +43,7 @@ public class GPSTracker extends Service implements LocationListener {
         initGPS();
     }
 
-    private void initGPS(){
+    public void initGPS(){
         try {
             Location tmp = null;
 
@@ -77,6 +77,14 @@ public class GPSTracker extends Service implements LocationListener {
 
     public Location getLocation(){
         return location;
+    }
+
+    public void stop() {
+        if (networkEnabled && (
+                context.checkCallingOrSelfPermission(Manifest.permission.INTERNET) == PackageManager.PERMISSION_GRANTED)
+            ||  context.checkCallingOrSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            locationManager.removeUpdates(this);
+        }
     }
 
     public void addListener(GPSListener listener){

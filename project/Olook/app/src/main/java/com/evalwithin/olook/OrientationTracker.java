@@ -31,9 +31,19 @@ public class OrientationTracker implements SensorEventListener {
         mAccelerometer = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         mMagnetometer = mSensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
 
+        initSensors();
+    }
+
+    public void initSensors() {
         mSensorManager.registerListener(this, mSensor, SensorManager.SENSOR_DELAY_NORMAL);
         mSensorManager.registerListener(this, mAccelerometer, SensorManager.SENSOR_DELAY_UI);
         mSensorManager.registerListener(this, mMagnetometer, SensorManager.SENSOR_DELAY_UI);
+    }
+
+    public void stop() {
+        mSensorManager.unregisterListener(this, mSensor);
+        mSensorManager.unregisterListener(this, mAccelerometer);
+        mSensorManager.unregisterListener(this, mMagnetometer);
     }
 
     @Override
