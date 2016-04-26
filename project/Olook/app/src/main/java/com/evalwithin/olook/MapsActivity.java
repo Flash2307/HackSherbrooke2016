@@ -41,6 +41,8 @@ import java.util.Set;
 public class MapsActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, OnMapReadyCallback, GPSListener, OrientationListener {
 
+    private final boolean UNLOCK_MODE = true;
+
     private GPSTracker gpsTracker;
     private OrientationTracker orientationTracker;
     private FilterItems filters;
@@ -177,8 +179,8 @@ public class MapsActivity extends AppCompatActivity
     public void onMapReady(final GoogleMap googleMap) {
 
         mMap = googleMap;
-        //mMap.getUiSettings().setScrollGesturesEnabled(false);
-        mMap.getUiSettings().setRotateGesturesEnabled(false);
+        mMap.getUiSettings().setScrollGesturesEnabled(UNLOCK_MODE ? true : false);
+        mMap.getUiSettings().setRotateGesturesEnabled(UNLOCK_MODE ? true : false);
         mMap.getUiSettings().setCompassEnabled(false);
         mMap.getUiSettings().setMapToolbarEnabled(false);
 
@@ -217,8 +219,8 @@ public class MapsActivity extends AppCompatActivity
             }
         });
 
-        //mMap.getUiSettings().setScrollGesturesEnabled(false);
-        //mMap.getUiSettings().setCompassEnabled(false);
+        mMap.getUiSettings().setScrollGesturesEnabled(UNLOCK_MODE ? true : false);
+        mMap.getUiSettings().setCompassEnabled(false);
 
         Location loc = gpsTracker.getLocation();
         LatLng ll = new LatLng(loc.getLatitude(), loc.getLongitude());
@@ -226,9 +228,8 @@ public class MapsActivity extends AppCompatActivity
         centerMap(loc, 15);
 
         MapUtils.setMyLocation(mMap, ll);
-        //MapUtils.addInterestPoint(googleMap, new LatLng(45.410600, -71.887200), MapUtils.IconIndex.WIFI, "Nice area!");
 
-        /*googleMap.setOnCameraChangeListener(new GoogleMap.OnCameraChangeListener() {
+        googleMap.setOnCameraChangeListener(new GoogleMap.OnCameraChangeListener() {
             private float lastZoom = 1;
             private LatLng lastPos = new LatLng(0, 0);
 
@@ -236,6 +237,8 @@ public class MapsActivity extends AppCompatActivity
 
             @Override
             public void onCameraChange(CameraPosition pos) {
+                if (UNLOCK_MODE) return;
+
                 float maxLevel = 18f;
                 float minLevel = 13f;
 
@@ -264,12 +267,6 @@ public class MapsActivity extends AppCompatActivity
                 lastZoom = pos.zoom;
             }
         });
-
-        // rotate 90 degrees
-        CameraPosition oldPos = googleMap.getCameraPosition();
-        CameraPosition pos = CameraPosition.builder(oldPos).bearing(245.0F).build();
-        googleMap.moveCamera(CameraUpdateFactory.newCameraPosition(pos));
-        */
     }
 
     @Override

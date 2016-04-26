@@ -32,7 +32,23 @@ public class Restaurant extends AreaOfInterest
 
     public String getPhoneNumber()
     {
-        return new DecimalFormat("(###) ###-####").format(phoneNumber);
+        return phoneNumber;
+    }
+
+    public static String formatPhoneNumber(String strNumber) {
+        String formattedPhoneNumber = "";
+        if (strNumber.length() == 10) {
+            try {
+                formattedPhoneNumber = String.format("(%s) %s-%s",
+                        strNumber.substring(0, 3),
+                        strNumber.substring(3, 6),
+                        strNumber.substring(6, 10)
+                );
+            } catch (NumberFormatException ex) {
+                formattedPhoneNumber = strNumber;
+            }
+        }
+        return formattedPhoneNumber;
     }
 
     public static ArrayList<AreaOfInterest> parseString(String dataString)
@@ -49,9 +65,7 @@ public class Restaurant extends AreaOfInterest
                 double locY = obj.optDouble("Latitude", 0);
                 String name = obj.getString("Nom");
                 String phoneNbr = obj.optString("NumeroTelephone", "");
-                try {
-                    phoneNbr = phoneNbr.format("(%s) %s-%s", phoneNbr.substring(0, 3), phoneNbr.substring(3, 6), phoneNbr.substring(6, 10));
-                } catch (Exception ex) {}
+                phoneNbr = formatPhoneNumber(phoneNbr);
                 String descCourte = obj.optString("DescriptionCourte", "");
                 String addr = obj.optString("NumeroCivique", "");
                 addr += " " + obj.optString("Rue", "");
