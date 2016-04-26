@@ -6,8 +6,10 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.app.Fragment;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.location.Location;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.NavigationView;
@@ -62,6 +64,8 @@ public class MapsActivity extends AppCompatActivity
 
     private Map<String, ArrayList<Marker>> markerMap;
 
+    private SharedPreferences pref;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -87,6 +91,7 @@ public class MapsActivity extends AppCompatActivity
         MapUtils.init(getResources());
 
         String[] filterNames = getResources().getStringArray(R.array.filter_array);
+        pref = getPreferences(Context.MODE_PRIVATE);
 
         filters = new FilterItems();
         filters.addFilters(Arrays.asList(filterNames));
@@ -134,7 +139,8 @@ public class MapsActivity extends AppCompatActivity
         if(menu.size() == 0)
         {
             for (FilterItems.FilterItem filterItem : filters.getFilterItems()) {
-                menu.add(0, filterItem.getId(), Menu.NONE, filterItem.getName()).setCheckable(true).setChecked(true);
+                boolean checked = pref.getBoolean(filterItem.getName(), true);
+                menu.add(0, filterItem.getId(), Menu.NONE, filterItem.getName()).setCheckable(true).setChecked(checked);
             }
         }
 
@@ -148,6 +154,8 @@ public class MapsActivity extends AppCompatActivity
 
         filters.changeActive(menuItem.getItemId());
 
+        SharedPreferences.Editor prefEditor = pref.edit();
+
         for(FilterItems.FilterItem item : filters.getFilterItems())
         {
             String key = item.getName();
@@ -160,7 +168,11 @@ public class MapsActivity extends AppCompatActivity
             {
                 marker.setVisible(item.isActive());
             }
+
+            prefEditor.putBoolean(key, item.isActive());
         }
+
+        prefEditor.commit();
 
         return false;
     }
@@ -168,7 +180,7 @@ public class MapsActivity extends AppCompatActivity
     @Override
     public void onBackPressed() {
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout1);
-        if (drawer.isDrawerOpen(GravityCompat.START)) {
+        if (drawer != null && drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
             super.onBackPressed();
@@ -320,8 +332,9 @@ public class MapsActivity extends AppCompatActivity
         Map<String, ArrayList<AreaOfInterest>> data = DataManager.getInstance().getAreaOfInterestValues(loc.getLongitude(), loc.getLatitude(), radius);
 
         Set<String> keys = data.keySet();
-
         for (String key: keys) {
+            if (!pref.getBoolean(key, true)) continue;
+
             MapUtils.IconIndex idx = MapUtils.getIconIndex(key);
             ArrayList<Marker> markerList = new ArrayList<>();
             for (AreaOfInterest area : data.get(key)) {
