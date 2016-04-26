@@ -177,7 +177,6 @@ public class MapsActivity extends AppCompatActivity
 
     @Override
     public void onMapReady(final GoogleMap googleMap) {
-
         mMap = googleMap;
         mMap.getUiSettings().setScrollGesturesEnabled(UNLOCK_MODE ? true : false);
         mMap.getUiSettings().setRotateGesturesEnabled(UNLOCK_MODE ? true : false);
@@ -219,22 +218,13 @@ public class MapsActivity extends AppCompatActivity
             }
         });
 
-        mMap.getUiSettings().setScrollGesturesEnabled(UNLOCK_MODE ? true : false);
-        mMap.getUiSettings().setCompassEnabled(false);
-
         Location loc = gpsTracker.getLocation();
         LatLng ll = new LatLng(loc.getLatitude(), loc.getLongitude());
 
         centerMap(loc, 15);
-
         MapUtils.setMyLocation(mMap, ll);
 
         googleMap.setOnCameraChangeListener(new GoogleMap.OnCameraChangeListener() {
-            private float lastZoom = 1;
-            private LatLng lastPos = new LatLng(0, 0);
-
-            private float cumulativeZoom = 0;
-
             @Override
             public void onCameraChange(CameraPosition pos) {
                 if (UNLOCK_MODE) return;
@@ -243,28 +233,12 @@ public class MapsActivity extends AppCompatActivity
                 float minLevel = 13f;
 
                 if (pos.zoom > maxLevel) {
-                    // TODO : Mettre le mode camera
-                    //googleMap.animateCamera(CameraUpdateFactory.zoomTo(maxLevel), 0, null);
                     googleMap.moveCamera(CameraUpdateFactory.zoomTo(maxLevel));
                 } else if (pos.zoom < minLevel) {
-                    //googleMap.animateCamera(CameraUpdateFactory.zoomTo(minLevel), 0, null);
                     googleMap.moveCamera(CameraUpdateFactory.zoomTo(minLevel));
                 }
 
-                boolean needToCenter = false;
-
-                if (cumulativeZoom < 0.2) {
-                    cumulativeZoom += pos.zoom - lastZoom;
-                } else {
-                    needToCenter = true;
-                    cumulativeZoom = 0;
-                }
-
-                if (true) {//needToCenter) {
-                    centerMap(gpsTracker.getLocation());
-                }
-
-                lastZoom = pos.zoom;
+                centerMap(gpsTracker.getLocation());
             }
         });
     }
@@ -279,19 +253,12 @@ public class MapsActivity extends AppCompatActivity
 
     }
 
-    @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
-        // Handle navigation view item clicks here.
         int id = item.getItemId();
-
         if (id == R.id.nav_camera) {
             Intent myIntent = new Intent(this, CameraActivity.class);
             this.startActivity(myIntent);
-        } else if (id == R.id.nav_manage) {
-
-        } else if (id == R.id.nav_share) {
-
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout1);
@@ -303,11 +270,16 @@ public class MapsActivity extends AppCompatActivity
     public void onGPSLocationChanged(Location newLocation) {
         if (lastDatapoint == null) {
             centerMap(newLocation);
+            if (UNLOCK_MODE) {
+                fillMarkers();
+            }
         }
 
         if (lastDatapoint == null || MapUtils.getDistance(lastDatapoint, newLocation) > 250) {
-            clearMarkers();
-            fillMarkers();
+            if (!UNLOCK_MODE) {
+                clearMarkers();
+                fillMarkers();
+            }
             lastDatapoint = newLocation;
         }
 
@@ -344,7 +316,7 @@ public class MapsActivity extends AppCompatActivity
 
     private void fillMarkers(){
         Location loc = gpsTracker.getLocation();
-        double radius = 80000;
+        double radius = UNLOCK_MODE ? 80000 : 3500;
         Map<String, ArrayList<AreaOfInterest>> data = DataManager.getInstance().getAreaOfInterestValues(loc.getLongitude(), loc.getLatitude(), radius);
 
         Set<String> keys = data.keySet();
