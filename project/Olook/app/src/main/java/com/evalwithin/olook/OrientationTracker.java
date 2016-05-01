@@ -23,7 +23,7 @@ public class OrientationTracker implements SensorEventListener {
     private float[] gravity = new float[3];
     private float[] geomagnetic = new float[3];
 
-    ArrayList<OrientationListener> listeners = new ArrayList<OrientationListener>();
+    ArrayList<OrientationListener> listeners = new ArrayList<>();
 
     public OrientationTracker(Context context) {
         mSensorManager = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
@@ -68,12 +68,12 @@ public class OrientationTracker implements SensorEventListener {
                 float orientation[] = new float[5];
                 try {
                     SensorManager.getOrientation(R, orientation);
-                    float azimut = orientation[0]; // orientation contains: azimut, pitch and roll
-                    float pitch = orientation[1];
-                    float roll = orientation[2];
+                    float x = orientation[0]; // orientation contains: azimut, pitch and roll
+                    float y = orientation[1];
+                    float z = orientation[2];
 
                     for (OrientationListener listener : listeners) {
-                        listener.onOrientationChanged(azimut, pitch, roll);
+                        listener.onOrientationChanged(x, y, z);
                     }
                 } catch (Exception ex) {
                     ex.printStackTrace();

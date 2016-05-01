@@ -17,8 +17,6 @@ import java.util.ArrayList;
  * Created by Frederik on 4/24/2016.
  */
 public class CameraOverlay extends View {
-    private int w, h;
-
     private boolean detection = false;
     private ArrayList<AreaOfInterest> areas;
 
@@ -31,21 +29,8 @@ public class CameraOverlay extends View {
     @Override
     protected void onDraw(Canvas canvas) {
         if (detection) {
-            Paint p = new Paint();
-
-            for (AreaOfInterest area : areas) {
-                Bitmap wifi = BitmapFactory.decodeResource(getResources(), R.drawable.wifi);
-                double angle = getAreaAngle(area, myLocation);
-                canvas.drawBitmap(wifi, (int)((float)w/2 + (float)angle/3.14*w/2), h/2, p);
-            }
+            VRUtils.drawDetection(canvas, getResources(), areas, myLocation);
         }
-    }
-
-    @Override
-    protected void onSizeChanged(int w, int h, int oldw, int oldh) {
-        super.onSizeChanged(w, h, oldw, oldh);
-        this.w = w;
-        this.h = h;
     }
 
     public void showDetection(ArrayList<AreaOfInterest> areas, Location myLoc) {
@@ -58,11 +43,5 @@ public class CameraOverlay extends View {
     public void hideDetection() {
         detection = false;
         invalidate();
-    }
-
-    private double getAreaAngle(AreaOfInterest area, Location myLoc) {
-        double distY = area.getLocY() - myLoc.getLatitude();
-        double distX = area.getLocX() - myLoc.getLongitude();
-        return Math.atan2(distY, distX);
     }
 }
